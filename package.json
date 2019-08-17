@@ -1,0 +1,27 @@
+{
+  "scripts": {
+    "start": "parcel -p 3000 public/index.html",
+    "build": "parcel build public/index.html"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.21",
+    "@fortawesome/free-solid-svg-icons": "^5.10.1",
+    "@fortawesome/react-fontawesome": "^0.1.4",
+    "bootstrap": "^4.3.1",
+    "jquery": "^3.4.1",
+    "moment": "^2.24.0",
+    "popper.js": "^1.15.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-table": "^7.0.0-alpha.23",
+    "reactstrap": "^8.0.1",
+    "styled-components": "^4.3.2",
+    "truffle-contract": "^4.0.29"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "parcel-bundler": "^1.12.3"
+  }
+}
