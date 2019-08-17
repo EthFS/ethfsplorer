@@ -1,10 +1,11 @@
 import React from 'react'
 import {useTable} from 'react-table'
+import {Table} from 'reactstrap'
 
-export default function Table({columns, data}) {
+export default function({columns, data}) {
   const {getTableProps, headerGroups, rows, prepareRow} = useTable({columns, data})
   return (
-    <table {...getTableProps()}>
+    <Table size="sm" hover responsive {...getTableProps()}>
       <thead>
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()}>
@@ -25,6 +26,6 @@ export default function Table({columns, data}) {
           )
         )}
       </tbody>
-    </table>
+    </Table>
   )
 }

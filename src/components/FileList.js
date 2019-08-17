@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react'
 import {useAsync} from 'react-async-hook'
-import styled from 'styled-components'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import moment from 'moment'
@@ -8,7 +7,7 @@ import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import Table from './Table'
 import {useKernel} from '../web3/kernel'
 
-export default function FileList({address, path}) {
+export default function FileList({address, path, onClickItem}) {
   const kernel = useKernel(address)
   const [files, setFiles] = useState([])
   useAsync(async () => {
@@ -46,9 +45,7 @@ export default function FileList({address, path}) {
   ], [])
   return (
     <div>
-      <Styles>
-        <Table columns={columns} data={files} />
-      </Styles>
+      <Table columns={columns} data={files} />
       <div className="text-center">
         {!files.length &&
           <FontAwesomeIcon icon={faSpinner} spin />
@@ -57,28 +54,3 @@ export default function FileList({address, path}) {
     </div>
   )
 }
-
-const Styles = styled.div`
-  padding: 1rem;
-  table {
-    border-spacing: 0;
-    border: 1px solid black;
-    tr {
-      :last-child {
-        td {
-          border-bottom: 0;
-        }
-      }
-    }
-    th,
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid black;
-      border-right: 1px solid black;
-      :last-child {
-        border-right: 0;
-      }
-    }
-  }
-`
