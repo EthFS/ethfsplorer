@@ -13,6 +13,7 @@
     "popper.js": "^1.15.0",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
+    "react-async-hook": "^3.4.0",
     "react-dom": "^16.9.0",
     "react-table": "^7.0.0-alpha.23",
     "reactstrap": "^8.0.1",

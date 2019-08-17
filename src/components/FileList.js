@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import {useAsync} from 'react-async-hook'
 import styled from 'styled-components'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
@@ -10,33 +11,31 @@ import {useKernel} from '../web3/kernel'
 export default function FileList({address, path}) {
   const kernel = useKernel(address)
   const [files, setFiles] = useState([])
-  useEffect(() => {
+  useAsync(async () => {
     if (!kernel) return
-    (async () => {
-      setFiles([])
-      const {entries} = await kernel.stat(utf8ToHex(path))
-      const dirs = [], dotdirs = []
-      const files = [], dotfiles = []
-      for (let i = 0; i < entries; i++) {
-        const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
-        const stat = await kernel.stat(utf8ToHex(`${path}/${name}`))
-        const size = stat.fileType == 2 ? '-' : Number(stat.size)
-        const lastModified = moment(stat.lastModified * 1e3).format('DD MMM YYYY HH:mm')
-        let arr
-        if (stat.fileType == 2) {
-          arr = name[0] === '.' ? dotdirs : dirs
-        } else {
-          arr = name[0] === '.' ? dotfiles : files
-        }
-        arr.push({name, ...stat, size, lastModified})
+    setFiles([])
+    const {entries} = await kernel.stat(utf8ToHex(path))
+    const dirs = [], dotdirs = []
+    const files = [], dotfiles = []
+    for (let i = 0; i < entries; i++) {
+      const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
+      const stat = await kernel.stat(utf8ToHex(`${path}/${name}`))
+      const size = stat.fileType == 2 ? '-' : Number(stat.size)
+      const lastModified = moment(stat.lastModified * 1e3).format('DD MMM YYYY HH:mm')
+      let arr
+      if (stat.fileType == 2) {
+        arr = name[0] === '.' ? dotdirs : dirs
+      } else {
+        arr = name[0] === '.' ? dotfiles : files
       }
-      setFiles(
-        dotdirs.sort()
-          .concat(dirs.sort())
-          .concat(dotfiles.sort())
-          .concat(files.sort())
-      )
-    })()
+      arr.push({name, ...stat, size, lastModified})
+    }
+    setFiles(
+      dotdirs.sort()
+        .concat(dirs.sort())
+        .concat(dotfiles.sort())
+        .concat(files.sort())
+    )
   }, [kernel, path])
   const columns = React.useMemo(() => [
     {Header: 'Name', accessor: 'name'},
