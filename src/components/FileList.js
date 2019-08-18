@@ -1,4 +1,4 @@
-import {join as pathjoin} from 'path'
+import {join as joinPath} from 'path'
 import React, {useState} from 'react'
 import {useAsync} from 'react-async-hook'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -26,7 +26,7 @@ export default function FileList({address, path, onClickItem}) {
       const files = [], dotfiles = []
       for (let i = 0; i < entries; i++) {
         const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
-        const stat = await kernel.stat(utf8ToHex(pathjoin(path, name)))
+        const stat = await kernel.stat(utf8ToHex(joinPath(path, name)))
         const size = stat.fileType == 2 ? undefined : Number(stat.size)
         const lastModified = moment(stat.lastModified * 1e3).format('DD MMM YYYY HH:mm')
         let arr

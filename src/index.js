@@ -5,7 +5,7 @@ import Browser from './components/Browser'
 import 'bootstrap/dist/css/bootstrap.min'
 
 render(
-  <div style={{height: '100vh'}}>
+  <div style={{height: '100vh', padding: 5}}>
     <Browser
       address="0x16e52740255BE996B78b2E8E97bCa7907d8E92F3"
     />

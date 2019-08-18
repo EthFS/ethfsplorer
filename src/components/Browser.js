@@ -17,6 +17,7 @@ export default function Browser({address, path}) {
               <FileTree
                 address={address}
                 path={path}
+                showPath={fileListPath}
                 expanded
                 onClickItem={setFileListPath}
               />

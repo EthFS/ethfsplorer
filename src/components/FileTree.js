@@ -1,4 +1,8 @@
-import {basename, join as pathjoin} from 'path'
+import {
+  basename,
+  join as joinPath,
+  normalize as normalizePath,
+} from 'path'
 import React, {useState} from 'react'
 import {useAsync} from 'react-async-hook'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -9,9 +13,12 @@ import {useKernel} from '../web3/kernel'
 export default function FileTree({
   address,
   path,
+  showPath,
   expanded: _expanded,
   onClickItem,
 }) {
+  path = normalizePath(path)
+  showPath = normalizePath(showPath)
   const kernel = useKernel(address)
   const [files, setFiles] = useState([])
   const [busy, setBusy] = useState(false)
@@ -24,16 +31,19 @@ export default function FileTree({
     const files = []
     for (let i = 2; i < entries; i++) {
       const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
-      const {fileType} = await kernel.stat(utf8ToHex(pathjoin(path, name)))
+      const {fileType} = await kernel.stat(utf8ToHex(joinPath(path, name)))
       if (fileType == 2) files.push(name)
     }
     setFiles(files)
     setBusy(false)
   }, [kernel, path, expanded])
+  if (!showPath.indexOf(path + '/') && !expanded) {
+    setExpanded(true)
+  }
   return (
     <div>
       <div>
-        <span onClick={() => setExpanded(!expanded)}>
+        <span style={{userSelect: 'none'}} onClick={() => setExpanded(!expanded)}>
           <FontAwesomeIcon icon={expanded ? faMinusSquare : faPlusSquare} />
         </span>
         <span style={{marginLeft: 5}} />
@@ -50,7 +60,8 @@ export default function FileTree({
               <FileTree
                 key={name}
                 address={address}
-                path={pathjoin(path, name)}
+                path={joinPath(path, name)}
+                showPath={showPath}
                 onClickItem={onClickItem}
               />
             )
