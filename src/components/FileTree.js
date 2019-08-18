@@ -1,5 +1,5 @@
 import {basename} from 'path'
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import {useAsync} from 'react-async-hook'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSpinner, faPlusSquare, faMinusSquare} from '@fortawesome/free-solid-svg-icons'
