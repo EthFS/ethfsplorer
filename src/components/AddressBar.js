@@ -9,7 +9,7 @@ export default function AddressBar({path: _path, onChange}) {
     setPrevPath(_path)
   }
   return (
-    <div style={{display: 'flex', flexDirection: 'row'}}>
+    <div style={{display: 'flex'}}>
       <Input
         placeholder="Enter a path..."
         value={path}
