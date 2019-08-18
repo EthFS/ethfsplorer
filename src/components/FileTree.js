@@ -1,4 +1,4 @@
-import {basename} from 'path'
+import {basename, join as pathjoin} from 'path'
 import React, {useState} from 'react'
 import {useAsync} from 'react-async-hook'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -24,7 +24,7 @@ export default function FileTree({
     const files = []
     for (let i = 2; i < entries; i++) {
       const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
-      const {fileType} = await kernel.stat(utf8ToHex(`${path}/${name}`))
+      const {fileType} = await kernel.stat(utf8ToHex(pathjoin(path, name)))
       if (fileType == 2) files.push(name)
     }
     setFiles(files)
@@ -50,7 +50,7 @@ export default function FileTree({
               <FileTree
                 key={name}
                 address={address}
-                path={`${path}/${name}`}
+                path={pathjoin(path, name)}
                 onClickItem={onClickItem}
               />
             )

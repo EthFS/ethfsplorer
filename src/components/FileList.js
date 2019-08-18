@@ -1,3 +1,4 @@
+import {join as pathjoin} from 'path'
 import React, {useState} from 'react'
 import {useAsync} from 'react-async-hook'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -10,31 +11,40 @@ import {useKernel} from '../web3/kernel'
 export default function FileList({address, path, onClickItem}) {
   const kernel = useKernel(address)
   const [files, setFiles] = useState([])
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState()
   useAsync(async () => {
     if (!kernel) return
     setFiles([])
-    const {entries} = await kernel.stat(utf8ToHex(path))
-    const dirs = [], dotdirs = []
-    const files = [], dotfiles = []
-    for (let i = 0; i < entries; i++) {
-      const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
-      const stat = await kernel.stat(utf8ToHex(`${path}/${name}`))
-      const size = stat.fileType == 2 ? '-' : Number(stat.size)
-      const lastModified = moment(stat.lastModified * 1e3).format('DD MMM YYYY HH:mm')
-      let arr
-      if (stat.fileType == 2) {
-        arr = name[0] === '.' ? dotdirs : dirs
-      } else {
-        arr = name[0] === '.' ? dotfiles : files
+    setBusy(true)
+    setError()
+    try {
+      const {entries} = await kernel.stat(utf8ToHex(path))
+      const dirs = [], dotdirs = []
+      const files = [], dotfiles = []
+      for (let i = 0; i < entries; i++) {
+        const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
+        const stat = await kernel.stat(utf8ToHex(pathjoin(path, name)))
+        const size = stat.fileType == 2 ? '-' : Number(stat.size)
+        const lastModified = moment(stat.lastModified * 1e3).format('DD MMM YYYY HH:mm')
+        let arr
+        if (stat.fileType == 2) {
+          arr = name[0] === '.' ? dotdirs : dirs
+        } else {
+          arr = name[0] === '.' ? dotfiles : files
+        }
+        arr.push({name, ...stat, size, lastModified})
       }
-      arr.push({name, ...stat, size, lastModified})
+      setFiles(
+        dotdirs.sort()
+          .concat(dirs.sort())
+          .concat(dotfiles.sort())
+          .concat(files.sort())
+      )
+    } catch (e) {
+      setError(e)
     }
-    setFiles(
-      dotdirs.sort()
-        .concat(dirs.sort())
-        .concat(dotfiles.sort())
-        .concat(files.sort())
-    )
+    setBusy(false)
   }, [kernel, path])
   const columns = React.useMemo(() => [
     {Header: 'Name', accessor: 'name'},
@@ -47,9 +57,8 @@ export default function FileList({address, path, onClickItem}) {
     <div>
       <Table columns={columns} data={files} />
       <div className="text-center">
-        {!files.length &&
-          <FontAwesomeIcon icon={faSpinner} spin />
-        }
+        {busy && <FontAwesomeIcon icon={faSpinner} spin />}
+        {error && <span>No such directory</span>}
       </div>
     </div>
   )
