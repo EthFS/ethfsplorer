@@ -19,7 +19,8 @@ export default function FileList({address, path, onClickItem}) {
     setBusy(true)
     setError()
     try {
-      const {entries} = await kernel.stat(utf8ToHex(path))
+      const {fileType, entries} = await kernel.stat(utf8ToHex(path))
+      if (fileType != 2) throw 'ENOTDIR'
       const dirs = [], dotdirs = []
       const files = [], dotfiles = []
       for (let i = 0; i < entries; i++) {
