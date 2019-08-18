@@ -2,6 +2,7 @@ import {
   basename,
   join as joinPath,
   normalize as normalizePath,
+  relative as relativePath,
 } from 'path'
 import React, {useState} from 'react'
 import {useAsync} from 'react-async-hook'
@@ -37,7 +38,9 @@ export default function FileTree({
     setFiles(files)
     setBusy(false)
   }, [kernel, path, expanded])
-  if (!showPath.indexOf(path + '/') && !expanded) {
+  const [prevShowPath, setPrevShowPath] = useState(showPath)
+  if (showPath !== prevShowPath && relativePath(path, showPath)[0] !== '.') {
+    setPrevShowPath(showPath)
     setExpanded(true)
   }
   return (
