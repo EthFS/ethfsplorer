@@ -7,6 +7,7 @@ import moment from 'moment'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import Table from './Table'
 import {useKernel} from '../web3/kernel'
+import {fileMode, fileSize} from '../utils/files'
 
 export default function FileList({address, path, onClickItem}) {
   const kernel = useKernel(address)
@@ -26,7 +27,7 @@ export default function FileList({address, path, onClickItem}) {
       for (let i = 0; i < entries; i++) {
         const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
         const stat = await kernel.stat(utf8ToHex(pathjoin(path, name)))
-        const size = stat.fileType == 2 ? '-' : Number(stat.size)
+        const size = stat.fileType == 2 ? undefined : Number(stat.size)
         const lastModified = moment(stat.lastModified * 1e3).format('DD MMM YYYY HH:mm')
         let arr
         if (stat.fileType == 2) {
@@ -51,7 +52,8 @@ export default function FileList({address, path, onClickItem}) {
     {Header: 'Name', accessor: 'name'},
     {Header: 'Owner', accessor: x => `${x.owner.slice(0, 12)}…`},
     {Header: 'Group', accessor: x => `${x.group.slice(0, 12)}…`},
-    {Header: 'Size', accessor: 'size'},
+    {Header: 'Permissions', accessor: x => fileMode(x.mode)},
+    {Header: 'Size', accessor: x => fileSize(x.size)},
     {Header: 'Last modified', accessor: 'lastModified'},
   ], [])
   return (
