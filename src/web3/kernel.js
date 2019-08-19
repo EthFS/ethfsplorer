@@ -5,10 +5,28 @@ import contract from 'truffle-contract'
 export function useKernel(address) {
   const [kernel, setKernel] = useState()
   useAsync(async () => {
+    let kernel = getCache(address)
+    if (kernel) return setKernel(kernel)
     const Kernel = contract(require('../../artifacts/Kernel'))
     Kernel.setProvider(ethereum)
     await ethereum.enable()
-    setKernel(await Kernel.at(address))
+    kernel = await Kernel.at(address)
+    setKernel(kernel)
+    setCache(address, kernel)
   }, [address, ethereum])
   return kernel
+}
+
+const cache = {}
+
+function getCache(address) {
+  if (cache.address === address && cache.ethereum === ethereum) {
+    return cache.kernel
+  }
+}
+
+function setCache(address, kernel) {
+  cache.address = address
+  cache.ethereum = ethereum
+  cache.kernel = kernel
 }
