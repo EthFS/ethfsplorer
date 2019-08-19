@@ -2,7 +2,6 @@ import {isAbsolute, join, normalize} from 'path'
 import {trimEnd} from 'lodash'
 import React, {useState} from 'react'
 import {Button, Input} from 'reactstrap'
-import {emit} from '../utils/events'
 
 export default function AddressBar({path: _path, onChange}) {
   const [path, setPath] = useState(_path)
@@ -19,7 +18,6 @@ export default function AddressBar({path: _path, onChange}) {
     if (path2 === '') path2 = '/'
     setPath(path2)
     onChange(path2)
-    emit('show-path', path2)
   }
   return (
     <div style={{display: 'flex'}}>

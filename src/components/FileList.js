@@ -50,15 +50,31 @@ export default function FileList({address, path, onClickItem}) {
     }
     setBusy(false)
   }, [kernel, path])
+  function handleClick(name) {
+    onClickItem(joinPath(path, name))
+  }
   const columns = React.useMemo(() => [
+    {
+      id: 'selection',
+      Header: ({ getToggleAllRowsSelectedProps }) => (
+        <div>
+          <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
+        </div>
+      ),
+      Cell: ({ row }) => (
+        <div>
+          <input type="checkbox" {...row.getToggleRowSelectedProps()} />
+        </div>
+      ),
+    },
     {id: 'fileType', accessor: x => Number(x.fileType), Cell: ({cell: {value}}) => <FileIcon fileType={value} />},
-    {Header: 'Name', accessor: 'name'},
+    {Header: 'Name', accessor: 'name', Cell: ({cell: {value}}) => <span style={{cursor: 'pointer'}} onClick={() => handleClick(value)}>{value}</span>},
     {Header: 'Owner', accessor: x => `${x.owner.slice(0, 12)}…`},
     {Header: 'Group', accessor: x => `${x.group.slice(0, 12)}…`},
     {Header: 'Mode', accessor: x => fileMode(x.mode), Cell: ({cell: {value}}) => <span style={{fontFamily: 'monospace'}}>{value}</span>},
     {Header: 'Size', accessor: x => fileSize(x.size)},
     {Header: 'Last modified', accessor: 'lastModified'},
-  ], [])
+  ], [path])
   return (
     <div>
       <Table columns={columns} data={files} />

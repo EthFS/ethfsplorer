@@ -1,9 +1,9 @@
 import React from 'react'
-import {useTable} from 'react-table'
+import {useTable, useRowSelect} from 'react-table'
 import {Table} from 'reactstrap'
 
 export default function({columns, data}) {
-  const {getTableProps, headerGroups, rows, prepareRow} = useTable({columns, data})
+  const {getTableProps, headerGroups, rows, prepareRow} = useTable({columns, data}, useRowSelect)
   return (
     <Table size="sm" hover responsive {...getTableProps()}>
       <thead>
