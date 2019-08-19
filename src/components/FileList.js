@@ -51,10 +51,11 @@ export default function FileList({address, path, onClickItem}) {
     setBusy(false)
   }, [kernel, path])
   const columns = React.useMemo(() => [
+    {id: 'fileType', accessor: x => Number(x.fileType), Cell: ({cell: {value}}) => <FileIcon fileType={value} />},
     {Header: 'Name', accessor: 'name'},
     {Header: 'Owner', accessor: x => `${x.owner.slice(0, 12)}…`},
     {Header: 'Group', accessor: x => `${x.group.slice(0, 12)}…`},
-    {Header: 'Permissions', accessor: x => fileMode(x.mode)},
+    {Header: 'Mode', accessor: x => fileMode(x.mode), Cell: ({cell: {value}}) => <span style={{fontFamily: 'monospace'}}>{value}</span>},
     {Header: 'Size', accessor: x => fileSize(x.size)},
     {Header: 'Last modified', accessor: 'lastModified'},
   ], [])
