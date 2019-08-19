@@ -30,6 +30,7 @@ export default function Browser({address, path}) {
                 address={address}
                 path={path}
                 showPath={path}
+                selectPath={fileListPath}
                 onClickItem={setFileListPath}
               />
             </div>

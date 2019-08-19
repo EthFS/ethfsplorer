@@ -5,8 +5,8 @@ import {faFile, faFolder, faFolderOpen} from '@fortawesome/free-solid-svg-icons'
 export default function FileIcon({fileType, expanded}) {
   switch (Number(fileType)) {
     case 1: default:
-      return <FontAwesomeIcon icon={faFile} />
+      return <FontAwesomeIcon icon={faFile} fixedWidth />
     case 2:
-      return <FontAwesomeIcon icon={expanded ? faFolderOpen : faFolder} />
+      return <FontAwesomeIcon icon={expanded ? faFolderOpen : faFolder} fixedWidth />
   }
 }

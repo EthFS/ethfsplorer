@@ -12,6 +12,7 @@ export default function FileTree({
   address,
   path,
   showPath: _showPath,
+  selectPath,
   onClickItem,
 }) {
   const kernel = useKernel(address)
@@ -50,16 +51,27 @@ export default function FileTree({
   }
   return (
     <div>
-      <div>
+      <div style={{display: 'flex', alignItems: 'center'}}>
         <span style={{userSelect: 'none'}} onClick={() => setExpanded(!expanded)}>
           <FileIcon fileType={2} expanded={expanded} />
         </span>
-        <span style={{marginLeft: 5}} />
-        <span style={{cursor: 'pointer', userSelect: 'none'}} onClick={handleClick} onDoubleClick={() => setExpanded(!expanded)}>
-          {Path.basename(path) || path}
-        </span>
-        <span style={{marginLeft: 5}} />
+        <span style={{marginLeft: 2}} />
+        <div style={{
+          backgroundColor: path === selectPath ? 'lightgray' : 'unset',
+          borderRadius: 2,
+          padding: '0 5px',
+        }}>
+          <span
+            style={{cursor: 'pointer', userSelect: 'none'}}
+            onClick={handleClick}
+            onDoubleClick={() => setExpanded(!expanded)}
+            >
+            {Path.basename(path) || path}
+          </span>
+        </div>
+        <span style={{marginLeft: 2}} />
         {busy && <FontAwesomeIcon icon={faSpinner} spin />}
+        <span style={{flex: 1}} />
       </div>
       {expanded &&
         <div style={{marginLeft: 20}}>
@@ -69,6 +81,7 @@ export default function FileTree({
               address={address}
               path={Path.join(path, name)}
               showPath={showPath}
+              selectPath={selectPath}
               onClickItem={onClickItem}
             />
           )}
