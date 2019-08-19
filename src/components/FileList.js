@@ -4,6 +4,7 @@ import {useAsync} from 'react-async-hook'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import moment from 'moment'
+import {sortBy} from 'lodash'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import Table from './Table'
 import {useKernel} from '../web3/kernel'
@@ -38,10 +39,10 @@ export default function FileList({address, path, onClickItem}) {
         arr.push({name, ...stat, size, lastModified})
       }
       setFiles(
-        dotdirs.sort()
-          .concat(dirs.sort())
-          .concat(dotfiles.sort())
-          .concat(files.sort())
+        sortBy(dotdirs, 'name')
+          .concat(sortBy(dirs, 'name'))
+          .concat(sortBy(dotfiles, 'name'))
+          .concat(sortBy(files, 'name'))
       )
     } catch (e) {
       setError(e)
