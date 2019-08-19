@@ -3,6 +3,7 @@ import {Container, Row, Col, Card, CardHeader} from 'reactstrap'
 import AddressBar from './AddressBar'
 import FileList from './FileList'
 import FileTree from './FileTree'
+import Toolbar from './Toolbar'
 import {emit} from '../utils/events'
 
 export default function Browser({address, path}) {
@@ -14,6 +15,12 @@ export default function Browser({address, path}) {
   }
   return (
     <Container className="h-100">
+      <Row>
+        <Col>
+          <Toolbar />
+          <div style={{marginTop: 5}} />
+        </Col>
+      </Row>
       <Row className="h-100">
         <Col lg="3">
           <Card className="h-100">
