@@ -1,3 +1,5 @@
+import {isAbsolute, join, normalize} from 'path'
+import {trimEnd} from 'lodash'
 import React, {useState} from 'react'
 import {Button, Input} from 'reactstrap'
 import {emit} from '../utils/events'
@@ -9,10 +11,15 @@ export default function AddressBar({path: _path, onChange}) {
     setPath(_path)
     setPrevPath(_path)
   }
-  function goToPath() {
+  function gotoPath() {
     if (!path) return
-    onChange(path)
-    emit('show-path', path)
+    let path2 = normalize(path)
+    if (!isAbsolute(path2)) path2 = join(_path, path2)
+    path2 = trimEnd(path2, '/')
+    if (path2 === '') path2 = '/'
+    setPath(path2)
+    onChange(path2)
+    emit('show-path', path2)
   }
   return (
     <div style={{display: 'flex'}}>
@@ -20,11 +27,11 @@ export default function AddressBar({path: _path, onChange}) {
         placeholder="Enter a path..."
         value={path}
         onChange={e => setPath(e.target.value)}
-        onKeyUp={e => e.key === 'Enter' && goToPath()}
+        onKeyUp={e => e.key === 'Enter' && gotoPath()}
         spellCheck="false"
       />
       <span style={{marginLeft: 5}} />
-      <Button onClick={goToPath} disabled={!path}>
+      <Button onClick={gotoPath} disabled={!path}>
         Go
       </Button>
     </div>
