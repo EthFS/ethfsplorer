@@ -51,7 +51,8 @@ export default function FileList({address, path, onClickItem}) {
     setBusy(false)
   }, [kernel, path])
   function handleClick(name) {
-    onClickItem(joinPath(path, name))
+    const {fileType} = files.find(x => x.name === name)
+    if (fileType == 2) onClickItem(joinPath(path, name))
   }
   const columns = React.useMemo(() => [
     {
@@ -74,7 +75,7 @@ export default function FileList({address, path, onClickItem}) {
     {Header: 'Mode', accessor: x => fileMode(x.mode), Cell: ({cell: {value}}) => <span style={{fontFamily: 'monospace'}}>{value}</span>},
     {Header: 'Size', accessor: x => fileSize(x.size)},
     {Header: 'Last modified', accessor: 'lastModified'},
-  ], [path])
+  ], [path, files])
   return (
     <div>
       <Table columns={columns} data={files} />

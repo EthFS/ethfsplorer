@@ -1,8 +1,4 @@
-import {
-  basename,
-  join as joinPath,
-  relative as relativePath,
-} from 'path'
+import * as Path from 'path'
 import React, {useState} from 'react'
 import {useAsync} from 'react-async-hook'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -22,7 +18,7 @@ export default function FileTree({
   const [files, setFiles] = useState([])
   const [busy, setBusy] = useState(false)
   const [showPath, setShowPath] = useState(_showPath)
-  const [expanded, setExpanded] = useState(relativePath(path, showPath)[0] !== '.')
+  const [expanded, setExpanded] = useState(Path.relative(path, showPath)[0] !== '.')
   const getFiles = useAsync(async () => {
     if (!kernel || !expanded) return
     setBusy(true)
@@ -31,19 +27,23 @@ export default function FileTree({
     const files = []
     for (let i = 2; i < entries; i++) {
       const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
-      const {fileType} = await kernel.stat(utf8ToHex(joinPath(path, name)))
+      const {fileType} = await kernel.stat(utf8ToHex(Path.join(path, name)))
       if (fileType == 2) files.push(name)
     }
     setFiles(files.sort())
     setBusy(false)
   }, [kernel, path, expanded])
   useEvent('show-path', showPath => {
-    if (relativePath(path, showPath)[0] !== '.') {
+    const path2 = Path.relative(path, showPath)
+    if (path2[0] !== '.') {
       setExpanded(true)
       setShowPath(showPath)
-      getFiles.execute()
+      const name = path2.split(Path.sep)[0]
+      if (name !== '' && files.indexOf(name) < 0) {
+        getFiles.execute()
+      }
     }
-  }, [path, expanded])
+  }, [path, files])
   function handleClick() {
     onClickItem(path)
     setExpanded(true)
@@ -56,7 +56,7 @@ export default function FileTree({
         </span>
         <span style={{marginLeft: 5}} />
         <span style={{cursor: 'pointer', userSelect: 'none'}} onClick={handleClick} onDoubleClick={() => setExpanded(!expanded)}>
-          {basename(path) || path}
+          {Path.basename(path) || path}
         </span>
         <span style={{marginLeft: 5}} />
         {busy && <FontAwesomeIcon icon={faSpinner} spin />}
@@ -67,7 +67,7 @@ export default function FileTree({
             <FileTree
               key={name}
               address={address}
-              path={joinPath(path, name)}
+              path={Path.join(path, name)}
               showPath={showPath}
               onClickItem={onClickItem}
             />
