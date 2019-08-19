@@ -55,7 +55,7 @@ export default function FileTree({
           <FileIcon fileType={2} expanded={expanded} />
         </span>
         <span style={{marginLeft: 5}} />
-        <span style={{cursor: 'pointer', userSelect: 'none'}} onClick={handleClick}>
+        <span style={{cursor: 'pointer', userSelect: 'none'}} onClick={handleClick} onDoubleClick={() => setExpanded(!expanded)}>
           {basename(path) || path}
         </span>
         <span style={{marginLeft: 5}} />
