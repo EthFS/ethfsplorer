@@ -6,8 +6,9 @@ import {
 import React, {useState} from 'react'
 import {useAsync} from 'react-async-hook'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faSpinner, faPlusSquare, faMinusSquare} from '@fortawesome/free-solid-svg-icons'
+import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
+import FileIcon from './FileIcon'
 import {useKernel} from '../web3/kernel'
 import {useEvent} from '../utils/events'
 
@@ -43,14 +44,18 @@ export default function FileTree({
       getFiles.execute()
     }
   }, [path, expanded])
+  function handleClick() {
+    onClickItem(path)
+    setExpanded(true)
+  }
   return (
     <div>
       <div>
         <span style={{userSelect: 'none'}} onClick={() => setExpanded(!expanded)}>
-          <FontAwesomeIcon icon={expanded ? faMinusSquare : faPlusSquare} />
+          <FileIcon fileType={2} expanded={expanded} />
         </span>
         <span style={{marginLeft: 5}} />
-        <span style={{cursor: 'pointer', userSelect: 'none'}} onClick={() => onClickItem(path)}>
+        <span style={{cursor: 'pointer', userSelect: 'none'}} onClick={handleClick}>
           {basename(path) || path}
         </span>
         <span style={{marginLeft: 5}} />
