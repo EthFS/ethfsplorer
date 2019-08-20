@@ -1,29 +1,40 @@
 import React, {useState} from 'react'
 import {Button, ButtonGroup, Tooltip} from 'reactstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faFile, faFolder} from '@fortawesome/free-solid-svg-icons'
+import {faFile, faFolder, faRedo} from '@fortawesome/free-solid-svg-icons'
 import {uniqueId} from 'lodash'
 import NewFile from './modals/NewFile'
 import NewFolder from './modals/NewFolder'
+import {emit} from '../utils/events'
 
 export default function Toolbar({address, path}) {
   return (
-    <ButtonGroup>
-      <ToolbarModal
-        address={address}
-        path={path}
-        icon={faFile}
-        label="New File"
-        modal={NewFile}
-      />
-      <ToolbarModal
-        address={address}
-        path={path}
-        icon={faFolder}
-        label="New Folder"
-        modal={NewFolder}
-      />
-    </ButtonGroup>
+    <>
+      <ButtonGroup>
+        <ToolbarModal
+          address={address}
+          path={path}
+          icon={faFile}
+          label="New File"
+          modal={NewFile}
+        />
+        <ToolbarModal
+          address={address}
+          path={path}
+          icon={faFolder}
+          label="New Folder"
+          modal={NewFolder}
+        />
+      </ButtonGroup>
+      <span style={{marginLeft: 5}} />
+      <ButtonGroup>
+        <ToolbarButton
+          icon={faRedo}
+          label="Refresh"
+          onClick={() => emit('refresh-all')}
+        />
+      </ButtonGroup>
+    </>
   )
 }
 

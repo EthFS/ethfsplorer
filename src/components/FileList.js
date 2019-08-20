@@ -54,6 +54,7 @@ export default function FileList({address, path, onClickItem}) {
   useEvent('refresh-path', refreshPath => {
     if (refreshPath === path) getFiles.execute()
   }, [path, getFiles])
+  useEvent('refresh-all', () => getFiles.execute(), [getFiles])
   function handleClick(name) {
     const {fileType} = files.find(x => x.name === name)
     if (fileType == 2) onClickItem(joinPath(path, name))
