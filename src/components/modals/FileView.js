@@ -1,20 +1,21 @@
 import React, {useState} from 'react'
-import {Form, FormText, Input} from 'reactstrap'
+import {Form, FormGroup, FormText, FormFeedback, Input, Progress} from 'reactstrap'
 import Modal from './Modal'
 import {useAsync} from 'react-async-hook'
-import constants from '../../web3/constants'
 import {useKernel} from '../../web3/kernel'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
-import errno from 'errno'
+import write from './write'
 
 export default function FileView({address, path, isOpen, toggle}) {
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [progress, setProgress] = useState()
+  const [progressText, setProgressText] = useState('')
   const [originalText, setOriginalText] = useState('')
   const kernel = useKernel(address)
   useAsync(async () => {
-    if (!kernel) return
+    if (!kernel || path === undefined) return
     setText('')
     setBusy(true)
     setError()
@@ -38,6 +39,10 @@ export default function FileView({address, path, isOpen, toggle}) {
   }
   async function handleOk(e) {
     e.preventDefault()
+    await write(kernel, path, 0, text.slice(originalText.length), setProgress, setProgressText, setError, () => {
+      setOriginalText(text)
+      toggle()
+    })
   }
   return (
     <Modal
@@ -46,21 +51,31 @@ export default function FileView({address, path, isOpen, toggle}) {
       toggle={toggle}
       labelOk="Save"
       onOk={handleOk}
-      allowOk={text.length > originalText.length}
+      allowOk={text.length > originalText.length && progress === undefined}
       size="lg"
       >
       <Form>
-        <Input
-          style={{height: 400}}
-          type="textarea"
-          value={text}
-          placeholder="This file is empty"
-          onChange={handleChange}
-        />
+        <FormGroup>
+          <Input
+            style={{height: 400}}
+            type="textarea"
+            value={text}
+            placeholder="This file is empty"
+            onChange={handleChange}
+            invalid={!!error}
+          />
+          <FormFeedback>{error}</FormFeedback>
+        </FormGroup>
         <FormText color="muted">
           Text may only be appended.
         </FormText>
       </Form>
+      {progress >= 0 &&
+        <>
+          <div style={{marginTop: 5}} />
+          <Progress animated value={progress}>{progressText}</Progress>
+        </>
+      }
     </Modal>
   )
 }

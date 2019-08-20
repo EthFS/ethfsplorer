@@ -4,10 +4,7 @@ import {Form, FormGroup, FormFeedback, Input, Progress} from 'reactstrap'
 import Modal from './Modal'
 import constants from '../../web3/constants'
 import {useKernel} from '../../web3/kernel'
-import {utf8ToHex} from 'web3-utils'
-import errno from 'errno'
-import {emit} from '../../utils/events'
-import write from '../../web3/write'
+import write from './write'
 
 export default function NewFile({address, path, isOpen, toggle}) {
   const [name, setName] = useState('')
@@ -19,28 +16,11 @@ export default function NewFile({address, path, isOpen, toggle}) {
   async function handleOk(e) {
     e.preventDefault()
     if (name === '') return
-    try {
-      const buf = Buffer.from(text)
-      setProgress(30)
-      setProgressText(`Opening ${name}`)
-      await kernel.open(utf8ToHex(Path.join(path, name)), constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL)
-      const fd = Number(await kernel.result())
-      const [,e] = await write(kernel, fd, '0x', buf, buf.length, x => {
-        setProgress(30 + 40 * x/buf.length)
-        setProgressText(`Writing ${x} / ${buf.length} bytes`)
-      })
-      if (e) throw e
-      setProgress(100)
-      setProgressText(`Closing ${name}`)
-      await kernel.close(fd)
+    await write(kernel, Path.join(path, name), constants.O_CREAT | constants.O_EXCL, text, setProgress, setProgressText, setError, () => {
       setName('')
       setText('')
       toggle()
-      emit('refresh-path', path)
-    } catch (e) {
-      if (e.reason) setError(errno.code[e.reason].description)
-    }
-    setProgress()
+    })
   }
   return (
     <Modal
