@@ -6,21 +6,42 @@ import {uniqueId} from 'lodash'
 import NewFile from './modals/NewFile'
 import NewFolder from './modals/NewFolder'
 
-export default function Toolbar() {
+export default function Toolbar({address, path}) {
   return (
     <ButtonGroup>
-      <ToolbarModal icon={faFile} label="New File" modal={NewFile} />
-      <ToolbarModal icon={faFolder} label="New Folder" modal={NewFolder} />
+      <ToolbarModal
+        address={address}
+        path={path}
+        icon={faFile}
+        label="New File"
+        modal={NewFile}
+      />
+      <ToolbarModal
+        address={address}
+        path={path}
+        icon={faFolder}
+        label="New Folder"
+        modal={NewFolder}
+      />
     </ButtonGroup>
   )
 }
 
-function ToolbarModal({icon, label, modal: Modal}) {
+function ToolbarModal({address, path, icon, label, modal: Modal}) {
   const [isOpen, setOpen] = useState(false)
   return (
     <>
-      <ToolbarButton icon={icon} label={label} onClick={() => setOpen(true)} />
-      <Modal isOpen={isOpen} toggle={() => setOpen(!isOpen)} />
+      <ToolbarButton
+        icon={icon}
+        label={label}
+        onClick={() => setOpen(true)}
+      />
+      <Modal
+        address={address}
+        path={path}
+        isOpen={isOpen}
+        toggle={() => setOpen(!isOpen)}
+      />
     </>
   )
 }

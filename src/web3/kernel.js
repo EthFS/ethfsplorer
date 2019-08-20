@@ -10,6 +10,8 @@ export function useKernel(address) {
     const Kernel = contract(require('../../artifacts/Kernel'))
     Kernel.setProvider(ethereum)
     await ethereum.enable()
+    const accounts = await Kernel.web3.eth.getAccounts()
+    Kernel.defaults({from: accounts[0]})
     kernel = await Kernel.at(address)
     setKernel(kernel)
     setCache(address, kernel)

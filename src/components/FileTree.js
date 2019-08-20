@@ -48,6 +48,7 @@ export default function FileTree({
   function handleClick() {
     onClickItem(path)
     setExpanded(true)
+    getFiles.execute()
   }
   return (
     <div>

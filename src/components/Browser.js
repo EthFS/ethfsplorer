@@ -17,7 +17,7 @@ export default function Browser({address, path}) {
     <Container className="h-100">
       <Row>
         <Col>
-          <Toolbar />
+          <Toolbar address={address} path={fileListPath} />
           <div style={{marginTop: 5}} />
         </Col>
       </Row>
