@@ -1,6 +1,6 @@
 import * as Path from 'path'
 import React, {useState} from 'react'
-import {Form, FormGroup, FormFeedback, Input} from 'reactstrap'
+import {Form, FormGroup, FormFeedback, Input, Progress} from 'reactstrap'
 import Modal from './Modal'
 import constants from '../../web3/constants'
 import {useKernel} from '../../web3/kernel'
@@ -13,25 +13,42 @@ export default function NewFile({address, path, isOpen, toggle}) {
   const [name, setName] = useState('')
   const [text, setText] = useState('')
   const [error, setError] = useState('')
+  const [progress, setProgress] = useState()
+  const [progressText, setProgressText] = useState('')
   const kernel = useKernel(address)
   async function handleOk(e) {
     e.preventDefault()
     if (name === '') return
     try {
+      const buf = Buffer.from(text)
+      const steps = 2 + Math.ceil(buf.length / 8192)
+      setProgress(100 / steps)
+      setProgressText(`Opening ${name}`)
       await kernel.open(utf8ToHex(Path.join(path, name)), constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL)
       const fd = Number(await kernel.result())
-      const [,e] = await write(kernel, fd, '0x', Buffer.from(text))
+      setProgress(200 / steps)
+      setProgressText(`Writing`)
+      const [,e] = await write(kernel, fd, '0x', buf)
       if (e) throw e
+      setProgress(100)
+      setProgressText(`Closing ${name}`)
       await kernel.close(fd)
       setName('')
       toggle()
       emit('refresh-path', path)
     } catch (e) {
-      setError(errno.code[e.reason].description)
+      if (e.reason) setError(errno.code[e.reason].description)
     }
+    setProgress()
   }
   return (
-    <Modal isOpen={isOpen} title="New File" toggle={toggle} onOk={handleOk} allowOk={name !== ''}>
+    <Modal
+      isOpen={isOpen}
+      title="New File"
+      toggle={toggle}
+      onOk={handleOk}
+      allowOk={name !== '' && progress === undefined}
+      >
       <Form onSubmit={handleOk}>
         <FormGroup>
           <Input
@@ -56,6 +73,9 @@ export default function NewFile({address, path, isOpen, toggle}) {
           />
         </FormGroup>
       </Form>
+      {progress >= 0 &&
+        <Progress animated bar value={progress}>{progressText}</Progress>
+      }
     </Modal>
   )
 }
