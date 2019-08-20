@@ -21,19 +21,20 @@ export default function NewFile({address, path, isOpen, toggle}) {
     if (name === '') return
     try {
       const buf = Buffer.from(text)
-      const steps = 2 + Math.ceil(buf.length / 8192)
-      setProgress(100 / steps)
+      setProgress(30)
       setProgressText(`Opening ${name}`)
       await kernel.open(utf8ToHex(Path.join(path, name)), constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL)
       const fd = Number(await kernel.result())
-      setProgress(200 / steps)
-      setProgressText(`Writing`)
-      const [,e] = await write(kernel, fd, '0x', buf)
+      const [,e] = await write(kernel, fd, '0x', buf, buf.length, x => {
+        setProgress(30 + 40 * x/buf.length)
+        setProgressText(`Writing ${x} / ${buf.length} bytes`)
+      })
       if (e) throw e
       setProgress(100)
       setProgressText(`Closing ${name}`)
       await kernel.close(fd)
       setName('')
+      setText('')
       toggle()
       emit('refresh-path', path)
     } catch (e) {
@@ -74,7 +75,7 @@ export default function NewFile({address, path, isOpen, toggle}) {
         </FormGroup>
       </Form>
       {progress >= 0 &&
-        <Progress animated bar value={progress}>{progressText}</Progress>
+        <Progress animated value={progress}>{progressText}</Progress>
       }
     </Modal>
   )
