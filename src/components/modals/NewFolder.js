@@ -5,6 +5,7 @@ import Modal from './Modal'
 import {useKernel} from '../../web3/kernel'
 import {utf8ToHex} from 'web3-utils'
 import errno from 'errno'
+import {emit} from '../../utils/events'
 
 export default function NewFolder({address, path, isOpen, toggle}) {
   const [name, setName] = useState('')
@@ -17,6 +18,7 @@ export default function NewFolder({address, path, isOpen, toggle}) {
       await kernel.mkdir(utf8ToHex(Path.join(path, name)))
       setName('')
       toggle()
+      emit('refresh-path', path)
     } catch (e) {
       setError(errno.code[e.reason].description)
     }

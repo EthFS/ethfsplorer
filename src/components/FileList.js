@@ -10,13 +10,14 @@ import FileIcon from './FileIcon'
 import Table from './Table'
 import {useKernel} from '../web3/kernel'
 import {fileMode, fileSize} from '../utils/files'
+import {useEvent} from '../utils/events'
 
 export default function FileList({address, path, onClickItem}) {
   const kernel = useKernel(address)
   const [files, setFiles] = useState([])
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState()
-  useAsync(async () => {
+  const getFiles = useAsync(async () => {
     if (!kernel) return
     setFiles([])
     setBusy(true)
@@ -50,6 +51,9 @@ export default function FileList({address, path, onClickItem}) {
     }
     setBusy(false)
   }, [kernel, path])
+  useEvent('refresh-path', refreshPath => {
+    if (refreshPath === path) getFiles.execute()
+  }, [path, getFiles])
   function handleClick(name) {
     const {fileType} = files.find(x => x.name === name)
     if (fileType == 2) onClickItem(joinPath(path, name))

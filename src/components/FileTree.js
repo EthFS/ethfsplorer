@@ -44,7 +44,10 @@ export default function FileTree({
         getFiles.execute()
       }
     }
-  }, [path, files])
+  }, [path, files, getFiles])
+  useEvent('refresh-path', refreshPath => {
+    if (refreshPath === path) getFiles.execute()
+  }, [path, getFiles])
   function handleClick() {
     onClickItem(path)
     setExpanded(true)
