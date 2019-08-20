@@ -1,6 +1,6 @@
 import * as Path from 'path'
 import React, {useState} from 'react'
-import {Form, FormGroup, FormFeedback, Label, Input} from 'reactstrap'
+import {Form, FormGroup, FormFeedback, Input} from 'reactstrap'
 import Modal from './Modal'
 import {useKernel} from '../../web3/kernel'
 import {utf8ToHex} from 'web3-utils'
