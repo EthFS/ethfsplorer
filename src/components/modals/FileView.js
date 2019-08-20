@@ -35,8 +35,10 @@ export default function FileView({address, path, isOpen, toggle}) {
       toggle={toggle}
       onOk={handleOk}
       allowOk={true}
+      size="lg"
       >
       <Input
+        style={{height: 400}}
         type="textarea"
         value={text}
         placeholder="This file is empty"

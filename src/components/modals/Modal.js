@@ -1,9 +1,9 @@
 import React from 'react'
 import {Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap'
 
-export default function({isOpen, title, children, onOk, allowOk, toggle}) {
+export default function({isOpen, title, children, onOk, allowOk, toggle, size}) {
   return (
-    <Modal isOpen={isOpen} toggle={toggle}>
+    <Modal isOpen={isOpen} toggle={toggle} size={size}>
       <ModalHeader toggle={toggle}>{title}</ModalHeader>
       <ModalBody>{children}</ModalBody>
       <ModalFooter>

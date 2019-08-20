@@ -49,6 +49,7 @@ export default function NewFile({address, path, isOpen, toggle}) {
       toggle={toggle}
       onOk={handleOk}
       allowOk={name !== '' && progress === undefined}
+      size="lg"
       >
       <Form onSubmit={handleOk}>
         <FormGroup>
@@ -67,6 +68,7 @@ export default function NewFile({address, path, isOpen, toggle}) {
         </FormGroup>
         <FormGroup>
           <Input
+            style={{height: 350}}
             type="textarea"
             value={text}
             placeholder="Enter file contents"
