@@ -70,6 +70,7 @@ function ToolbarButton({icon, label, onClick}) {
         isOpen={isOpen}
         target={id}
         toggle={() => setOpen(!isOpen)}
+        trigger="hover"
         >
         {label}
       </Tooltip>
