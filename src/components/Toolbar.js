@@ -3,22 +3,25 @@ import {Button, ButtonGroup, Tooltip} from 'reactstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faFile, faFolder} from '@fortawesome/free-solid-svg-icons'
 import {uniqueId} from 'lodash'
-import Modal from './Modal'
+import NewFile from './modals/NewFile'
+import NewFolder from './modals/NewFolder'
 
 export default function Toolbar() {
-  const [showNewFile, setShowNewFile] = useState(false)
   return (
     <ButtonGroup>
-      <ToolbarButton
-        icon={faFile}
-        label="New File"
-        onClick={() => setShowNewFile(true)}
-      />
-      <Modal isOpen={showNewFile} title="New File" toggle={() => setShowNewFile(!showNewFile)}>
-        Hello
-      </Modal>
-      <ToolbarButton icon={faFolder} label="New Folder" />
+      <ToolbarModal icon={faFile} label="New File" modal={NewFile} />
+      <ToolbarModal icon={faFolder} label="New Folder" modal={NewFolder} />
     </ButtonGroup>
+  )
+}
+
+function ToolbarModal({icon, label, modal: Modal}) {
+  const [isOpen, setOpen] = useState(false)
+  return (
+    <>
+      <ToolbarButton icon={icon} label={label} onClick={() => setOpen(true)} />
+      <Modal isOpen={isOpen} toggle={() => setOpen(!isOpen)} />
+    </>
   )
 }
 
