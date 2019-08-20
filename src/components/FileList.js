@@ -8,6 +8,7 @@ import {sortBy} from 'lodash'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import FileIcon from './FileIcon'
 import Table from './Table'
+import FileView from './modals/FileView'
 import {useKernel} from '../web3/kernel'
 import {fileMode, fileSize} from '../utils/files'
 import {useEvent} from '../utils/events'
@@ -55,9 +56,20 @@ export default function FileList({address, path, onClickItem}) {
     if (refreshPath === path) getFiles.execute()
   }, [path, getFiles])
   useEvent('refresh-all', () => getFiles.execute(), [getFiles])
+  const [showFileView, setShowFileView] = useState(false)
+  const [fileViewPath, setFileViewPath] = useState()
   function handleClick(name) {
+    const path2 = joinPath(path, name)
     const {fileType} = files.find(x => x.name === name)
-    if (fileType == 2) onClickItem(joinPath(path, name))
+    switch (Number(fileType)) {
+      case 1:
+        setFileViewPath(path2)
+        setShowFileView(true)
+        break
+      case 2:
+        onClickItem(path2)
+        break
+    }
   }
   const columns = React.useMemo(() => [
     {
@@ -88,6 +100,12 @@ export default function FileList({address, path, onClickItem}) {
         {busy && <FontAwesomeIcon icon={faSpinner} spin />}
         {error && <span>No such directory</span>}
       </div>
+      <FileView
+        address={address}
+        path={fileViewPath}
+        isOpen={showFileView}
+        toggle={() => setShowFileView(!showFileView)}
+      />
     </div>
   )
 }
