@@ -7,6 +7,7 @@ import {useKernel} from '../../web3/kernel'
 import {utf8ToHex} from 'web3-utils'
 import errno from 'errno'
 import {emit} from '../../utils/events'
+import write from '../../web3/write'
 
 export default function NewFile({address, path, isOpen, toggle}) {
   const [name, setName] = useState('')
@@ -19,6 +20,8 @@ export default function NewFile({address, path, isOpen, toggle}) {
     try {
       await kernel.open(utf8ToHex(Path.join(path, name)), constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL)
       const fd = Number(await kernel.result())
+      const [,e] = await write(kernel, fd, '0x', Buffer.from(text))
+      if (e) throw e
       await kernel.close(fd)
       setName('')
       toggle()
