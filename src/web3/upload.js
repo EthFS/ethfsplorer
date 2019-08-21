@@ -3,7 +3,6 @@ import errno from 'errno'
 import {utf8ToHex} from 'web3-utils'
 import constants from './constants'
 import write from './write'
-import {emit} from '../utils/events'
 
 export default async function upload(
   kernel, path, files, setProgress, setProgressText,
@@ -11,7 +10,7 @@ export default async function upload(
   for (let i = 0; i < files.length; i++) {
     const {name} = files[i]
     const path2 = Path.join(path, name)
-    setProgress(100*(i+1) / files.length)
+    setProgress(100)
     setProgressText(`Reading ${name}`)
     const reader = new FileReader()
     reader.readAsArrayBuffer(files[i])
@@ -27,17 +26,16 @@ export default async function upload(
             setProgressText(`Writing ${x} / ${buf.length} bytes`)
           })
           if (e) throw e
+          setProgress(100)
           setProgressText(`Closing ${name}`)
           await kernel.close(fd)
           resolve()
         } catch (e) {
-          e = errno.code[e.reason]
-          if (e) setError(e.description)
-          reject(e)
+          const err = errno.code[e.reason]
+          reject(err ? err.description : e.message)
         }
       }
     })
   }
   setProgress()
-  emit('refresh-path', path)
 }

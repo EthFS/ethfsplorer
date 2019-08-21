@@ -17,6 +17,7 @@ export default function Toolbar({address, path}) {
   const [progressTitle, setProgressTitle] = useState('')
   const [progress, setProgress] = useState()
   const [progressText, setProgressText] = useState('')
+  const [error, setError] = useState()
   const filePicker = useRef()
   return (
     <>
@@ -67,15 +68,25 @@ export default function Toolbar({address, path}) {
         style={{display: 'none'}}
         type="file"
         multiple
-        onChange={() => {
+        onChange={async () => {
+          setError()
           setProgressTitle('Uploading')
-          upload(kernel, path, filePicker.current.files, setProgress, setProgressText)
+          const files = [...filePicker.current.files]
+          filePicker.current.value = ''
+          try {
+            await upload(kernel, path, files, setProgress, setProgressText)
+          } catch (e) {
+            setError(e)
+            setTimeout(setProgress, 3e3)
+          }
+          emit('refresh-path', path)
         }}
       />
       <ProgressBar
         title={progressTitle}
         progress={progress}
         progressText={progressText}
+        error={error}
       />
     </>
   )
