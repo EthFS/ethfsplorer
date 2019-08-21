@@ -4,6 +4,7 @@ import Modal from './Modal'
 import {useAsync} from 'react-async-hook'
 import {useKernel} from '../../web3/kernel'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
+import common from 'common-prefix'
 import errno from 'errno'
 import write from './write'
 
@@ -33,16 +34,10 @@ export default function FileView({address, path, isOpen, toggle}) {
     }
     setBusy(false)
   }, [kernel, path])
-  function handleChange(e) {
-    const {value} = e.target
-    if (originalText !== value.slice(0, originalText.length)) {
-      return e.preventDefault()
-    }
-    setText(value)
-  }
+  const prefix = common([text, originalText])
   async function handleOk(e) {
     e.preventDefault()
-    await write(kernel, path, 0, text.slice(originalText.length), setProgress, setProgressText, setError, () => {
+    await write(kernel, path, 0, text.slice(prefix.length), prefix.length, setProgress, setProgressText, setError, () => {
       setOriginalText(text)
       toggle()
     })
@@ -54,7 +49,7 @@ export default function FileView({address, path, isOpen, toggle}) {
       toggle={toggle}
       labelOk="Save"
       onOk={handleOk}
-      allowOk={text.length > originalText.length && progress === undefined}
+      allowOk={text !== originalText && progress === undefined}
       size="lg"
       >
       <Form>
@@ -64,14 +59,16 @@ export default function FileView({address, path, isOpen, toggle}) {
             type="textarea"
             value={text}
             placeholder="This file is empty"
-            onChange={handleChange}
+            onChange={e => setText(e.target.value)}
             invalid={!!error}
           />
           <FormFeedback>{error}</FormFeedback>
         </FormGroup>
-        <FormText color="muted">
-          Text may only be appended.
-        </FormText>
+        {text !== originalText &&
+          <FormText color="muted">
+            Operations: {prefix.length < originalText.length ? `Truncate to ${prefix.length} bytes. ` : ''}{text.length > prefix.length ? `Append ${text.length - prefix.length} bytes.` : ''}
+          </FormText>
+        }
       </Form>
       {progress >= 0 &&
         <>

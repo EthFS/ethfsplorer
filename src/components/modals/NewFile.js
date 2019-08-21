@@ -16,7 +16,7 @@ export default function NewFile({address, path, isOpen, toggle}) {
   async function handleOk(e) {
     e.preventDefault()
     if (name === '') return
-    await write(kernel, Path.join(path, name), constants.O_CREAT | constants.O_EXCL, text, setProgress, setProgressText, setError, () => {
+    await write(kernel, Path.join(path, name), constants.O_CREAT | constants.O_EXCL, text, -1, setProgress, setProgressText, setError, () => {
       setName('')
       setText('')
       toggle()
