@@ -4,6 +4,7 @@ import Modal from './Modal'
 import {useAsync} from 'react-async-hook'
 import {useKernel} from '../../web3/kernel'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
+import errno from 'errno'
 import write from './write'
 
 export default function FileView({address, path, isOpen, toggle}) {
@@ -17,6 +18,7 @@ export default function FileView({address, path, isOpen, toggle}) {
   useAsync(async () => {
     if (!kernel || path === undefined) return
     setText('')
+    setOriginalText('')
     setBusy(true)
     setError()
     try {
@@ -26,7 +28,8 @@ export default function FileView({address, path, isOpen, toggle}) {
       setText(data)
       setOriginalText(data)
     } catch (e) {
-      setError(e)
+      e = errno.code[e.reason]
+      if (e) setError(e.description)
     }
     setBusy(false)
   }, [kernel, path])
