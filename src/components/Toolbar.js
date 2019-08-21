@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useRef} from 'react'
 import {Button, ButtonGroup, Tooltip} from 'reactstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {
@@ -7,9 +7,17 @@ import {
 import {uniqueId} from 'lodash'
 import NewFile from './modals/NewFile'
 import NewFolder from './modals/NewFolder'
+import ProgressBar from './modals/ProgressBar'
 import {emit} from '../utils/events'
+import {useKernel} from '../web3/kernel'
+import upload from '../web3/upload'
 
 export default function Toolbar({address, path}) {
+  const kernel = useKernel(address)
+  const [progressTitle, setProgressTitle] = useState('')
+  const [progress, setProgress] = useState()
+  const [progressText, setProgressText] = useState('')
+  const filePicker = useRef()
   return (
     <>
       <ButtonGroup>
@@ -51,9 +59,24 @@ export default function Toolbar({address, path}) {
         <ToolbarButton
           icon={faUpload}
           label="Upload"
-          onClick={() => emit('upload')}
+          onClick={() => filePicker.current.click()}
         />
       </ButtonGroup>
+      <input
+        ref={filePicker}
+        style={{display: 'none'}}
+        type="file"
+        multiple
+        onChange={() => {
+          setProgressTitle('Uploading')
+          upload(kernel, path, filePicker.current.files, setProgress, setProgressText)
+        }}
+      />
+      <ProgressBar
+        title={progressTitle}
+        progress={progress}
+        progressText={progressText}
+      />
     </>
   )
 }
