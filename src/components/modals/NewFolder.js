@@ -20,8 +20,8 @@ export default function NewFolder({address, path, isOpen, toggle}) {
       toggle()
       emit('refresh-path', path)
     } catch (e) {
-      e = errno.code[e.reason]
-      if (e) setError(e.description)
+      const err = errno.code[e.reason]
+      setError(err ? err.description : e.message)
     }
   }
   return (

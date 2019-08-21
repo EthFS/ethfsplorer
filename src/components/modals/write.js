@@ -29,8 +29,8 @@ export default async function(
     onOk()
     emit('refresh-path', dirname(path))
   } catch (e) {
-    e = errno.code[e.reason]
-    if (e) setError(e.description)
+    const err = errno.code[e.reason]
+    setError(err ? err.description : e.message)
   }
   setProgress()
 }

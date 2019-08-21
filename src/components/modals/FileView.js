@@ -31,8 +31,8 @@ export default function FileView({address, path, isOpen, toggle}) {
       setText(data)
       setOriginalText(data)
     } catch (e) {
-      e = errno.code[e.reason]
-      if (e) setError(e.description)
+      const err = errno.code[e.reason]
+      setError(err ? err.description : e.message)
     }
     setBusy(false)
   }, [kernel, path, isOpen])
