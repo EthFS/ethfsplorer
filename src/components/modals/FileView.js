@@ -39,7 +39,7 @@ export default function FileView({address, path, isOpen, toggle}) {
   const prefix = common([text, originalText])
   async function handleOk(e) {
     e.preventDefault()
-    await write(kernel, path, 0, text.slice(prefix.length), prefix.length, setProgress, setProgressText, setError, () => {
+    await write(kernel, path, 0, text.slice(prefix.length), prefix.length < originalText.length ? prefix.length : -1, setProgress, setProgressText, setError, () => {
       setOriginalText(text)
       toggle()
     })

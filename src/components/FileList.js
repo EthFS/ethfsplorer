@@ -63,7 +63,11 @@ export default function FileList({address, path, onClickItem}) {
   const [progress, setProgress] = useState()
   const [progressText, setProgressText] = useState('')
   useEvent('delete', async () => {
-    const selectedFiles = selectedRows.map(i => files[i])
+    const selectedFiles = selectedRows
+      .filter(i => i > 1)
+      .map(i => files[i])
+      .filter(x => x)
+    if (!selectedFiles.length) return
     setProgressTitle('Delete')
     try {
       for (let i = 0; i < selectedFiles.length; i++) {
