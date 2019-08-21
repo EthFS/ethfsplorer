@@ -1,4 +1,4 @@
-import {join as joinPath} from 'path'
+import * as Path from 'path'
 import React, {useState} from 'react'
 import {useAsync} from 'react-async-hook'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -11,7 +11,8 @@ import Table from './Table'
 import FileView from './modals/FileView'
 import {useKernel} from '../web3/kernel'
 import {fileMode, fileSize} from '../utils/files'
-import {useEvent} from '../utils/events'
+import {emit, useEvent} from '../utils/events'
+import rm from '../web3/rm'
 
 export default function FileList({address, path, onClickItem}) {
   const kernel = useKernel(address)
@@ -30,7 +31,7 @@ export default function FileList({address, path, onClickItem}) {
       const files = [], dotfiles = []
       for (let i = 0; i < entries; i++) {
         const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
-        const stat = await kernel.stat(utf8ToHex(joinPath(path, name)))
+        const stat = await kernel.stat(utf8ToHex(Path.join(path, name)))
         const size = stat.fileType == 2 ? undefined : Number(stat.size)
         const lastModified = moment(stat.lastModified * 1e3).format('DD MMM YYYY HH:mm')
         let arr
@@ -56,10 +57,19 @@ export default function FileList({address, path, onClickItem}) {
     if (refreshPath === path) getFiles.execute()
   }, [path, getFiles])
   useEvent('refresh-all', () => getFiles.execute(), [getFiles])
+  const [selectedRows, setSelectedRows] = useState([])
+  useEvent('delete', async () => {
+    const selectedFiles = selectedRows.map(i => files[i])
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const {name} = selectedFiles[i]
+      await rm(kernel, Path.join(path, name))
+    }
+    emit('refresh-path', path)
+  }, [kernel, path, files, selectedRows])
   const [showFileView, setShowFileView] = useState(false)
   const [fileViewPath, setFileViewPath] = useState()
   function handleClick(name) {
-    const path2 = joinPath(path, name)
+    const path2 = Path.join(path, name)
     const {fileType} = files.find(x => x.name === name)
     switch (Number(fileType)) {
       case 1:
@@ -95,7 +105,7 @@ export default function FileList({address, path, onClickItem}) {
   ], [path, files])
   return (
     <div>
-      <Table columns={columns} data={files} />
+      <Table columns={columns} data={files} setSelectedRows={setSelectedRows} />
       <div className="text-center">
         {busy && <FontAwesomeIcon icon={faSpinner} spin />}
         {error && <span>No such directory</span>}

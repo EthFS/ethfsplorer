@@ -2,8 +2,15 @@ import React from 'react'
 import {useTable, useRowSelect} from 'react-table'
 import {Table} from 'reactstrap'
 
-export default function({columns, data}) {
-  const {getTableProps, headerGroups, rows, prepareRow} = useTable({columns, data}, useRowSelect)
+export default function({columns, data, setSelectedRows}) {
+  const {
+    getTableProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    state: [{selectedRows}],
+  } = useTable({columns, data}, useRowSelect)
+  if (setSelectedRows) setSelectedRows(selectedRows)
   return (
     <Table size="sm" hover responsive {...getTableProps()}>
       <thead>
