@@ -9,6 +9,7 @@ import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import FileIcon from './FileIcon'
 import Table from './Table'
 import FileView from './modals/FileView'
+import ProgressBar from './modals/ProgressBar'
 import {useKernel} from '../web3/kernel'
 import {fileMode, fileSize} from '../utils/files'
 import {emit, useEvent} from '../utils/events'
@@ -58,12 +59,20 @@ export default function FileList({address, path, onClickItem}) {
   }, [path, getFiles])
   useEvent('refresh-all', () => getFiles.execute(), [getFiles])
   const [selectedRows, setSelectedRows] = useState([])
+  const [progressTitle, setProgressTitle] = useState('')
+  const [progress, setProgress] = useState()
+  const [progressText, setProgressText] = useState('')
   useEvent('delete', async () => {
     const selectedFiles = selectedRows.map(i => files[i])
-    for (let i = 0; i < selectedFiles.length; i++) {
-      const {name} = selectedFiles[i]
-      await rm(kernel, Path.join(path, name))
-    }
+    setProgressTitle('Delete')
+    try {
+      for (let i = 0; i < selectedFiles.length; i++) {
+        setProgress(100*(i+1) / selectedFiles.length)
+        const {name} = selectedFiles[i]
+        await rm(kernel, Path.join(path, name), setProgress, setProgressText)
+      }
+    } catch (e) {}
+    setProgress()
     emit('refresh-path', path)
   }, [kernel, path, files, selectedRows])
   const [showFileView, setShowFileView] = useState(false)
@@ -115,6 +124,11 @@ export default function FileList({address, path, onClickItem}) {
         path={fileViewPath}
         isOpen={showFileView}
         toggle={() => setShowFileView(!showFileView)}
+      />
+      <ProgressBar
+        title={progressTitle}
+        progress={progress}
+        progressText={progressText}
       />
     </div>
   )
