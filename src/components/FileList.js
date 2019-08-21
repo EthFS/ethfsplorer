@@ -13,6 +13,7 @@ import ProgressBar from './modals/ProgressBar'
 import {useKernel} from '../web3/kernel'
 import {fileMode, fileSize} from '../utils/files'
 import {emit, useEvent} from '../utils/events'
+import download from '../web3/download'
 import rm from '../web3/rm'
 
 export default function FileList({address, path, onClickItem}) {
@@ -54,14 +55,17 @@ export default function FileList({address, path, onClickItem}) {
     }
     setBusy(false)
   }, [kernel, path])
+
   useEvent('refresh-path', refreshPath => {
     if (refreshPath === path) getFiles.execute()
   }, [path, getFiles])
   useEvent('refresh-all', () => getFiles.execute(), [getFiles])
+
   const [selectedRows, setSelectedRows] = useState([])
   const [progressTitle, setProgressTitle] = useState('')
   const [progress, setProgress] = useState()
   const [progressText, setProgressText] = useState('')
+
   useEvent('delete', async () => {
     const selectedFiles = selectedRows
       .filter(i => i > 1)
@@ -79,6 +83,17 @@ export default function FileList({address, path, onClickItem}) {
     setProgress()
     emit('refresh-path', path)
   }, [kernel, path, files, selectedRows])
+
+  useEvent('download', async () => {
+    const selectedFiles = selectedRows
+      .filter(i => i > 1)
+      .map(i => files[i])
+      .filter(x => x)
+    try {
+      await download(kernel, path, selectedFiles)
+    } catch (e) {}
+  }, [kernel, path, files, selectedRows])
+
   const [showFileView, setShowFileView] = useState(false)
   const [fileViewPath, setFileViewPath] = useState()
   function handleClick(name) {

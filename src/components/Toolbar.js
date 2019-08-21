@@ -1,7 +1,9 @@
 import React, {useState} from 'react'
 import {Button, ButtonGroup, Tooltip} from 'reactstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faFile, faFolder, faRedo, faTrash} from '@fortawesome/free-solid-svg-icons'
+import {
+  faFile, faFolder, faRedo, faTrash, faDownload, faUpload,
+} from '@fortawesome/free-solid-svg-icons'
 import {uniqueId} from 'lodash'
 import NewFile from './modals/NewFile'
 import NewFolder from './modals/NewFolder'
@@ -26,20 +28,30 @@ export default function Toolbar({address, path}) {
           modal={NewFolder}
         />
       </ButtonGroup>
-      <span style={{marginLeft: 5}} />
-      <ButtonGroup>
+      <ButtonGroup style={{marginLeft: 5}}>
         <ToolbarButton
           icon={faRedo}
           label="Refresh"
           onClick={() => emit('refresh-all')}
         />
       </ButtonGroup>
-      <span style={{marginLeft: 5}} />
-      <ButtonGroup>
+      <ButtonGroup style={{marginLeft: 5}}>
         <ToolbarButton
           icon={faTrash}
           label="Delete"
           onClick={() => emit('delete')}
+        />
+      </ButtonGroup>
+      <ButtonGroup style={{marginLeft: 5}}>
+        <ToolbarButton
+          icon={faDownload}
+          label="Download"
+          onClick={() => emit('download')}
+        />
+        <ToolbarButton
+          icon={faUpload}
+          label="Upload"
+          onClick={() => emit('upload')}
         />
       </ButtonGroup>
     </>
