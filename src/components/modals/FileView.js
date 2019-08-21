@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
 import {Form, FormGroup, FormText, FormFeedback, Input, Progress} from 'reactstrap'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import Modal from './Modal'
 import {useAsync} from 'react-async-hook'
 import {useKernel} from '../../web3/kernel'
@@ -17,7 +19,7 @@ export default function FileView({address, path, isOpen, toggle}) {
   const [originalText, setOriginalText] = useState('')
   const kernel = useKernel(address)
   useAsync(async () => {
-    if (!kernel || path === undefined) return
+    if (!kernel || path === undefined || !isOpen) return
     setText('')
     setOriginalText('')
     setBusy(true)
@@ -33,7 +35,7 @@ export default function FileView({address, path, isOpen, toggle}) {
       if (e) setError(e.description)
     }
     setBusy(false)
-  }, [kernel, path])
+  }, [kernel, path, isOpen])
   const prefix = common([text, originalText])
   async function handleOk(e) {
     e.preventDefault()
@@ -45,7 +47,12 @@ export default function FileView({address, path, isOpen, toggle}) {
   return (
     <Modal
       isOpen={isOpen}
-      title={`Viewing ${path}`}
+      title={
+        <span>
+          {`Viewing ${path}`}
+          {busy && <FontAwesomeIcon style={{marginLeft: 5}} icon={faSpinner} spin />}
+        </span>
+      }
       toggle={toggle}
       labelOk="Save"
       onOk={handleOk}
