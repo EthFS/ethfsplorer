@@ -26,11 +26,19 @@ export default function Rename({address, path, isOpen, toggle}) {
     input.current.focus()
     setFresh()
   })
+  function pathToAbsolute(path2) {
+    if (!Path.isAbsolute(path2)) {
+      path2 = Path.join(Path.dirname(path), path2)
+    }
+    return Path.normalize(path2)
+  }
   async function handleOk(e) {
     e.preventDefault()
-    if (newPath === '' || newPath === path) return
+    if (newPath === '') return
+    const path2 = pathToAbsolute(newPath)
+    if (path2 === path) return
     try {
-      await kernel.move(utf8ToHex(path), utf8ToHex(newPath))
+      await kernel.move(utf8ToHex(path), utf8ToHex(path2))
       toggle()
       emit('refresh-path', Path.dirname(path))
     } catch (e) {
@@ -44,7 +52,7 @@ export default function Rename({address, path, isOpen, toggle}) {
       title="Rename"
       toggle={toggle}
       onOk={handleOk}
-      allowOk={newPath !== '' && newPath !== path}
+      allowOk={newPath !== '' && pathToAbsolute(newPath) !== path}
       >
       <Form onSubmit={handleOk}>
         <FormGroup>
