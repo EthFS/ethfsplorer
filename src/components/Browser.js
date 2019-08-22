@@ -14,18 +14,21 @@ export default function Browser({address, path}) {
     emit('show-path', path)
   }
   return (
-    <Container className="h-100">
+    <Container fluid className="d-flex flex-column h-100">
       <Row>
         <Col>
           <Toolbar address={address} path={fileListPath} />
           <div style={{marginTop: 5}} />
         </Col>
       </Row>
-      <Row className="h-100">
+      <Row className="flex-grow-1">
         <Col lg="3">
           <Card className="h-100">
             <CardHeader>Directory Tree</CardHeader>
-            <div style={{padding: 5}}>
+            <div
+              className="flex-grow-1"
+              style={{height: 0, padding: 5, overflowY: 'auto'}}
+              >
               <FileTree
                 address={address}
                 path={path}
@@ -36,14 +39,18 @@ export default function Browser({address, path}) {
             </div>
           </Card>
         </Col>
-        <Col lg="9">
+        <Col lg="9" className="d-flex flex-column">
           <AddressBar path={fileListPath} onChange={handleChangePath} />
-          <div style={{marginTop: 5}} />
-          <FileList
-            address={address}
-            path={fileListPath}
-            onClickItem={handleChangePath}
-          />
+          <div
+            className="flex-grow-1"
+            style={{height: 0, marginTop: 5, overflowY: 'auto'}}
+            >
+            <FileList
+              address={address}
+              path={fileListPath}
+              onClickItem={handleChangePath}
+            />
+          </div>
         </Col>
       </Row>
     </Container>

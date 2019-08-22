@@ -229,7 +229,7 @@ export default function FileList({address, path, onClickItem}) {
   ], [path, files])
 
   return (
-    <div>
+    <>
       <Table columns={columns} data={files} setSelectedRows={setSelectedRows} />
       <div className="text-center">
         {busy && <FontAwesomeIcon icon={faSpinner} spin />}
@@ -264,6 +264,6 @@ export default function FileList({address, path, onClickItem}) {
         isOpen={!!renamePath}
         toggle={() => setRenamePath('')}
       />
-    </div>
+    </>
   )
 }

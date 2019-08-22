@@ -20,7 +20,7 @@ export default function AddressBar({path: _path, onChange}) {
     onChange(path2)
   }
   return (
-    <div style={{display: 'flex'}}>
+    <div className="d-flex">
       <Input
         placeholder="Enter a path..."
         value={path}

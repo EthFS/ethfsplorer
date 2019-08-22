@@ -55,8 +55,8 @@ export default function FileTree({
     getFiles.execute()
   }
   return (
-    <div>
-      <div style={{display: 'flex', alignItems: 'center'}}>
+    <>
+      <div className="d-flex align-items-center">
         <span style={{userSelect: 'none'}} onClick={() => setExpanded(!expanded)}>
           <FileIcon fileType={2} expanded={expanded} />
         </span>
@@ -76,7 +76,7 @@ export default function FileTree({
         </div>
         <span style={{marginLeft: 2}} />
         {busy && <FontAwesomeIcon icon={faSpinner} spin />}
-        <span style={{flex: 1}} />
+        <span className="flex-grow-1" />
       </div>
       {expanded &&
         <div style={{marginLeft: 20}}>
@@ -92,6 +92,6 @@ export default function FileTree({
           )}
         </div>
       }
-    </div>
+    </>
   )
 }
