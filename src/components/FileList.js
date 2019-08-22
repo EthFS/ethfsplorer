@@ -174,6 +174,15 @@ export default function FileList({address, path, onClickItem}) {
     setRenamePath(Path.join(path, name))
   }
 
+  function handleCut(name) {
+    setCutFiles([Path.join(path, name)])
+    setCopyFiles([])
+  }
+  function handleCopy(name) {
+    setCutFiles([])
+    setCopyFiles([Path.join(path, name)])
+  }
+
   const columns = React.useMemo(() => [
     {
       id: 'selection',
@@ -231,6 +240,9 @@ export default function FileList({address, path, onClickItem}) {
         <MenuItem onClick={(e, {name}) => handleDelete(name)}>Delete</MenuItem>
         <MenuItem divider />
         <MenuItem onClick={(e, {name}) => handleRename(name)}>Rename</MenuItem>
+        <MenuItem divider />
+        <MenuItem onClick={(e, {name}) => handleCut(name)}>Cut</MenuItem>
+        <MenuItem onClick={(e, {name}) => handleCopy(name)}>Copy</MenuItem>
       </ContextMenu>
       <Rename
         address={address}
