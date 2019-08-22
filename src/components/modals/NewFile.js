@@ -32,6 +32,7 @@ export default function NewFile({address, path, isOpen, toggle}) {
       toggle={toggle}
       onOk={handleOk}
       allowOk={name !== '' && progress === undefined}
+      centered
       size="lg"
       >
       <Form onSubmit={handleOk}>

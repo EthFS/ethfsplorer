@@ -57,26 +57,24 @@ export default function FileTree({
   return (
     <>
       <div className="d-flex align-items-center">
-        <span style={{userSelect: 'none'}} onClick={() => setExpanded(!expanded)}>
+        <div style={{userSelect: 'none'}} onClick={() => setExpanded(!expanded)}>
           <FileIcon fileType={2} expanded={expanded} />
-        </span>
-        <span style={{marginLeft: 2}} />
-        <div style={{
-          backgroundColor: path === selectPath ? 'lightgray' : 'unset',
-          borderRadius: 2,
-          padding: '0 5px',
-        }}>
-          <span
-            style={{cursor: 'pointer', userSelect: 'none'}}
-            onClick={handleClick}
-            onDoubleClick={() => setExpanded(!expanded)}
-            >
-            {Path.basename(path) || path}
-          </span>
         </div>
-        <span style={{marginLeft: 2}} />
+        <div
+          style={{
+            backgroundColor: path === selectPath ? 'lightgray' : 'unset',
+            borderRadius: 4,
+            cursor: 'pointer',
+            margin: '0 2px',
+            padding: '0 5px',
+            userSelect: 'none',
+          }}
+          onClick={handleClick}
+          onDoubleClick={() => setExpanded(!expanded)}
+          >
+          {Path.basename(path) || path}
+        </div>
         {busy && <FontAwesomeIcon icon={faSpinner} spin />}
-        <span className="flex-grow-1" />
       </div>
       {expanded &&
         <div style={{marginLeft: 20}}>

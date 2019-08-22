@@ -59,6 +59,7 @@ export default function FileView({address, path, isOpen, toggle}) {
       labelOk="Save"
       onOk={handleOk}
       allowOk={text !== originalText && progress === undefined}
+      centered
       size="lg"
       >
       <Form>
