@@ -1,9 +1,10 @@
 import * as Path from 'path'
-import React, {useState} from 'react'
+import React, {useState, useRef} from 'react'
 import {Form, FormGroup, FormFeedback, Input, Progress} from 'reactstrap'
 import Modal from './Modal'
 import constants from '../../web3/constants'
 import {useKernel} from '../../web3/kernel'
+import useTrigger from '../../utils/trigger'
 import write from './write'
 
 export default function NewFile({address, path, isOpen, toggle}) {
@@ -13,6 +14,8 @@ export default function NewFile({address, path, isOpen, toggle}) {
   const [progress, setProgress] = useState()
   const [progressText, setProgressText] = useState('')
   const kernel = useKernel(address)
+  const input = useRef()
+  useTrigger(isOpen, () => input.current.focus())
   async function handleOk(e) {
     e.preventDefault()
     if (name === '') return
@@ -34,6 +37,7 @@ export default function NewFile({address, path, isOpen, toggle}) {
       <Form onSubmit={handleOk}>
         <FormGroup>
           <Input
+            innerRef={input}
             type="text"
             value={name}
             placeholder="Enter name"

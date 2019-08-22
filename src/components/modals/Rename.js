@@ -6,25 +6,22 @@ import {useKernel} from '../../web3/kernel'
 import {utf8ToHex} from 'web3-utils'
 import errno from 'errno'
 import {emit} from '../../utils/events'
+import useTrigger from '../../utils/trigger'
 
 export default function Rename({address, path, isOpen, toggle}) {
   const [newPath, setNewPath] = useState('')
   const [error, setError] = useState('')
-  const [fresh, setFresh] = useState()
   const kernel = useKernel(address)
   const input = useRef()
   useEffect(() => {
     if (!isOpen) return
     setNewPath(path)
     setError('')
-    setFresh(true)
   }, [isOpen])
-  useEffect(() => {
-    if (!fresh) return
+  useTrigger(isOpen, () => {
     const {length} = Path.basename(path)
     input.current.setSelectionRange(path.length-length, path.length)
     input.current.focus()
-    setFresh()
   })
   function pathToAbsolute(path2) {
     if (!Path.isAbsolute(path2)) {
