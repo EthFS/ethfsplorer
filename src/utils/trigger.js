@@ -9,5 +9,5 @@ export default function useTrigger(value, cb) {
     if (!trigger) return
     setTrigger()
     cb()
-  })
+  }, [trigger])
 }

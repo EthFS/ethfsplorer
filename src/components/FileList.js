@@ -4,6 +4,7 @@ import {useAsync} from 'react-async-hook'
 import {ContextMenu, MenuItem, ContextMenuTrigger} from 'react-contextmenu'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
+import errno from 'errno'
 import moment from 'moment'
 import {sortBy} from 'lodash'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
@@ -67,6 +68,7 @@ export default function FileList({address, path, onClickItem}) {
   const [progressTitle, setProgressTitle] = useState('')
   const [progress, setProgress] = useState()
   const [progressText, setProgressText] = useState('')
+  const [progressError, setProgressError] = useState()
 
   useEvent('delete', async () => {
     const selectedFiles = selectedRows
@@ -115,24 +117,35 @@ export default function FileList({address, path, onClickItem}) {
       .map(x => Path.join(path, x.name)))
   }, [path, files, selectedRows])
   useEvent('paste', async () => {
-    if (cutFiles.length) {
-      setProgressTitle('Moving files')
-      for (let i = 0; i < cutFiles.length; i++) {
-        setProgress(100*(i+1) / cutFiles.length)
-        setProgressText(`Moving ${cutFiles[i]}`)
-        await kernel.move(utf8ToHex(cutFiles[i]), utf8ToHex(path))
+    try {
+      setProgressError()
+      if (cutFiles.length) {
+        setProgressTitle('Moving files')
+        for (let i = 0; i < cutFiles.length; i++) {
+          setProgress(100*(i+1) / cutFiles.length)
+          setProgressText(`Moving ${cutFiles[i]}`)
+          await kernel.move(utf8ToHex(cutFiles[i]), utf8ToHex(path))
+        }
       }
-    }
-    if (copyFiles.length) {
-      setProgressTitle('Copying files')
-      for (let i = 0; i < copyFiles.length; i++) {
-        setProgress(100*(i+1) / copyFiles.length)
-        setProgressText(`Copying ${copyFiles[i]}`)
-        await kernel.copy(utf8ToHex(copyFiles[i]), utf8ToHex(path))
+      if (copyFiles.length) {
+        setProgressTitle('Copying files')
+        for (let i = 0; i < copyFiles.length; i++) {
+          setProgress(100*(i+1) / copyFiles.length)
+          setProgressText(`Copying ${copyFiles[i]}`)
+          await kernel.copy(utf8ToHex(copyFiles[i]), utf8ToHex(path))
+        }
       }
+      setProgress()
+    } catch (e) {
+      const err = errno.code[e.reason]
+      setProgressError(err ? err.description : e.message)
+      setTimeout(setProgress, 3e3)
     }
-    setProgress()
-    emit('refresh-path', path)
+    if (cutFiles.length || copyFiles.length) {
+      setCutFiles([])
+      setCopyFiles([])
+      emit('refresh-path', path)
+    }
   }, [kernel, path, cutFiles, copyFiles])
 
   const [showFileView, setShowFileView] = useState(false)
@@ -232,6 +245,7 @@ export default function FileList({address, path, onClickItem}) {
         title={progressTitle}
         progress={progress}
         progressText={progressText}
+        error={progressError}
       />
       <ContextMenu id="fileContextMenu">
         <MenuItem onClick={(e, {name}) => handleOpen(name)}>Open</MenuItem>
