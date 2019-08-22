@@ -6,10 +6,13 @@ import JSZip from 'jszip'
 export default async function download(kernel, path, files, zip) {
   if (!files.length) return
   if (!zip && files.length === 1) {
-    const {fileType, name} = files[0]
+    const {fileType, size, name} = files[0]
     if (fileType == 1) {
-      let data = await kernel.readPath(utf8ToHex(Path.join(path, name)), '0x')
-      data = Buffer.from(data.slice(2), 'hex')
+      let data = ''
+      if (size > 0) {
+        data = await kernel.readPath(utf8ToHex(Path.join(path, name)), '0x')
+        data = Buffer.from(data.slice(2), 'hex')
+      }
       return saveAs(new Blob([data], {type: 'application/octet-stream'}), name)
     }
   }
@@ -19,12 +22,15 @@ export default async function download(kernel, path, files, zip) {
     topLevel = true
   }
   for (let i = 0; i < files.length; i++) {
-    const {fileType, entries, name} = files[i]
+    const {fileType, entries, size, name} = files[i]
     const path2 = Path.join(path, name)
     switch (Number(fileType)) {
       case 1:
-        let data = await kernel.readPath(utf8ToHex(path2), '0x')
-        data = Buffer.from(data.slice(2), 'hex')
+        let data = ''
+        if (size > 0) {
+          data = await kernel.readPath(utf8ToHex(path2), '0x')
+          data = Buffer.from(data.slice(2), 'hex')
+        }
         zip.file(name, data)
         break
       case 2:

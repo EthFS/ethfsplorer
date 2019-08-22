@@ -98,7 +98,8 @@ export default function FileList({address, path, onClickItem}) {
 
   const [showFileView, setShowFileView] = useState(false)
   const [fileViewPath, setFileViewPath] = useState()
-  function handleClick(name) {
+
+  function handleOpen(name) {
     const path2 = Path.join(path, name)
     const {fileType} = files.find(x => x.name === name)
     switch (Number(fileType)) {
@@ -110,6 +111,23 @@ export default function FileList({address, path, onClickItem}) {
         onClickItem(path2)
         break
     }
+  }
+
+  async function handleDownload(name) {
+    const path2 = Path.join(path, name)
+    const file = files.find(x => x.name === name)
+    await download(kernel, path2, [file])
+  }
+
+  async function handleDelete(name) {
+    const path2 = Path.join(path, name)
+    setProgressTitle('Delete')
+    try {
+      setProgress(100)
+      await rm(kernel, path2, setProgress, setProgressText)
+    } catch (e) {}
+    setProgress()
+    emit('refresh-path', path)
   }
 
   const [renamePath, setRenamePath] = useState('')
@@ -136,7 +154,7 @@ export default function FileList({address, path, onClickItem}) {
       <ContextMenuTrigger id="fileContextMenu" name={value} collect={({name}) => ({name})}>
         <span
           style={{cursor: 'pointer', userSelect: 'none'}}
-          onClick={() => handleClick(value)}
+          onClick={() => handleOpen(value)}
           >
           {value}
         </span>
@@ -148,6 +166,7 @@ export default function FileList({address, path, onClickItem}) {
     {Header: 'Size', accessor: x => fileSize(x.size)},
     {Header: 'Last modified', accessor: 'lastModified'},
   ], [path, files])
+
   return (
     <div>
       <Table columns={columns} data={files} setSelectedRows={setSelectedRows} />
@@ -167,6 +186,11 @@ export default function FileList({address, path, onClickItem}) {
         progressText={progressText}
       />
       <ContextMenu id="fileContextMenu">
+        <MenuItem onClick={(e, {name}) => handleOpen(name)}>Open</MenuItem>
+        <MenuItem onClick={(e, {name}) => handleDownload(name)}>Download</MenuItem>
+        <MenuItem divider />
+        <MenuItem onClick={(e, {name}) => handleDelete(name)}>Delete</MenuItem>
+        <MenuItem divider />
         <MenuItem onClick={(e, {name}) => handleRename(name)}>Rename</MenuItem>
       </ContextMenu>
       <Rename

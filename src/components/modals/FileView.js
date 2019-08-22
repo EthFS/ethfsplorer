@@ -25,11 +25,13 @@ export default function FileView({address, path, isOpen, toggle}) {
     setBusy(true)
     setError()
     try {
-      const {fileType} = await kernel.stat(utf8ToHex(path))
+      const {fileType, size} = await kernel.stat(utf8ToHex(path))
       if (fileType == 2) throw 'EISDIR'
-      const data = hexToUtf8(await kernel.readPath(utf8ToHex(path), '0x'))
-      setText(data)
-      setOriginalText(data)
+      if (size > 0) {
+        const data = hexToUtf8(await kernel.readPath(utf8ToHex(path), '0x'))
+        setText(data)
+        setOriginalText(data)
+      }
     } catch (e) {
       const err = errno.code[e.reason]
       setError(err ? err.description : e.message)
