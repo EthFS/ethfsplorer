@@ -1,6 +1,7 @@
 import * as Path from 'path'
 import React, {useState} from 'react'
 import {useAsync} from 'react-async-hook'
+import {ContextMenu, MenuItem, ContextMenuTrigger} from 'react-contextmenu'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import moment from 'moment'
@@ -10,6 +11,7 @@ import FileIcon from './FileIcon'
 import Table from './Table'
 import FileView from './modals/FileView'
 import ProgressBar from './modals/ProgressBar'
+import Rename from './modals/Rename'
 import {useKernel} from '../web3/kernel'
 import {fileMode, fileSize} from '../utils/files'
 import {emit, useEvent} from '../utils/events'
@@ -109,6 +111,12 @@ export default function FileList({address, path, onClickItem}) {
         break
     }
   }
+
+  const [renamePath, setRenamePath] = useState('')
+  function handleRename(name) {
+    setRenamePath(Path.join(path, name))
+  }
+
   const columns = React.useMemo(() => [
     {
       id: 'selection',
@@ -124,7 +132,16 @@ export default function FileList({address, path, onClickItem}) {
       ),
     },
     {id: 'fileType', accessor: x => Number(x.fileType), Cell: ({cell: {value}}) => <FileIcon fileType={value} />},
-    {Header: 'Name', accessor: 'name', Cell: ({cell: {value}}) => <span style={{cursor: 'pointer'}} onClick={() => handleClick(value)}>{value}</span>},
+    {Header: 'Name', accessor: 'name', Cell: ({cell: {value}}) =>
+      <ContextMenuTrigger id="fileContextMenu" name={value} collect={({name}) => ({name})}>
+        <span
+          style={{cursor: 'pointer', userSelect: 'none'}}
+          onClick={() => handleClick(value)}
+          >
+          {value}
+        </span>
+      </ContextMenuTrigger>
+    },
     {Header: 'Owner', accessor: x => `${x.owner.slice(0, 12)}…`},
     {Header: 'Group', accessor: x => `${x.group.slice(0, 12)}…`},
     {Header: 'Mode', accessor: x => fileMode(x.mode), Cell: ({cell: {value}}) => <span style={{fontFamily: 'monospace'}}>{value}</span>},
@@ -148,6 +165,15 @@ export default function FileList({address, path, onClickItem}) {
         title={progressTitle}
         progress={progress}
         progressText={progressText}
+      />
+      <ContextMenu id="fileContextMenu">
+        <MenuItem onClick={(e, {name}) => handleRename(name)}>Rename</MenuItem>
+      </ContextMenu>
+      <Rename
+        address={address}
+        path={renamePath}
+        isOpen={!!renamePath}
+        toggle={() => setRenamePath('')}
       />
     </div>
   )

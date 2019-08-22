@@ -1641,7 +1641,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2.3:
+classnames@^2.2.3, classnames@^2.2.5:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
   integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
@@ -5978,6 +5978,14 @@ react-async-hook@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/react-async-hook/-/react-async-hook-3.4.0.tgz#0ed584a1edd85ea632eeb18ad4185cf5aea05fdd"
   integrity sha512-LAX8FH/sem4FtTXK66CGXIT51UVT8HdvUxs0PpSYX++sNA6PLwMXaslYrGd844FXgJF+VEoASPftp5q0P+PutA==
+
+react-contextmenu@^2.11.0:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/react-contextmenu/-/react-contextmenu-2.11.0.tgz#ec57614e6d687ceaec5c0ba97d56a302c9551d17"
+  integrity sha512-vT9QV9p/9h1BSIvmajRVG3KsgjuBnISpEQp0F1QYsUPFMe3VOKV2l7IiD8yrNUyXYZKrWMqI0YKsaBwGSRVgJg==
+  dependencies:
+    classnames "^2.2.5"
+    object-assign "^4.1.0"
 
 react-dom@^16.9.0:
   version "16.9.0"
