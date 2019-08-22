@@ -96,6 +96,45 @@ export default function FileList({address, path, onClickItem}) {
     } catch (e) {}
   }, [kernel, path, files, selectedRows])
 
+  const [cutFiles, setCutFiles] = useState([])
+  const [copyFiles, setCopyFiles] = useState([])
+  useEvent('cut', () => {
+    setCutFiles(selectedRows
+      .filter(i => i > 1)
+      .map(i => files[i])
+      .filter(x => x)
+      .map(x => Path.join(path, x.name)))
+    setCopyFiles([])
+  }, [path, files, selectedRows])
+  useEvent('copy', () => {
+    setCutFiles([])
+    setCopyFiles(selectedRows
+      .filter(i => i > 1)
+      .map(i => files[i])
+      .filter(x => x)
+      .map(x => Path.join(path, x.name)))
+  }, [path, files, selectedRows])
+  useEvent('paste', async () => {
+    if (cutFiles.length) {
+      setProgressTitle('Moving files')
+      for (let i = 0; i < cutFiles.length; i++) {
+        setProgress(100*(i+1) / cutFiles.length)
+        setProgressText(`Moving ${cutFiles[i]}`)
+        await kernel.move(utf8ToHex(cutFiles[i]), utf8ToHex(path))
+      }
+    }
+    if (copyFiles.length) {
+      setProgressTitle('Copying files')
+      for (let i = 0; i < copyFiles.length; i++) {
+        setProgress(100*(i+1) / copyFiles.length)
+        setProgressText(`Copying ${copyFiles[i]}`)
+        await kernel.copy(utf8ToHex(copyFiles[i]), utf8ToHex(path))
+      }
+    }
+    setProgress()
+    emit('refresh-path', path)
+  }, [kernel, path, cutFiles, copyFiles])
+
   const [showFileView, setShowFileView] = useState(false)
   const [fileViewPath, setFileViewPath] = useState()
 

@@ -3,6 +3,7 @@ import {Button, ButtonGroup, Tooltip} from 'reactstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {
   faFile, faFolder, faRedo, faTrash, faDownload, faUpload,
+  faCut, faCopy, faPaste,
 } from '@fortawesome/free-solid-svg-icons'
 import {uniqueId} from 'lodash'
 import NewFile from './modals/NewFile'
@@ -61,6 +62,23 @@ export default function Toolbar({address, path}) {
           icon={faUpload}
           label="Upload"
           onClick={() => filePicker.current.click()}
+        />
+      </ButtonGroup>
+      <ButtonGroup style={{marginLeft: 5}}>
+        <ToolbarButton
+          icon={faCut}
+          label="Cut"
+          onClick={() => emit('cut')}
+        />
+        <ToolbarButton
+          icon={faCopy}
+          label="Copy"
+          onClick={() => emit('copy')}
+        />
+        <ToolbarButton
+          icon={faPaste}
+          label="Paste"
+          onClick={() => emit('paste')}
         />
       </ButtonGroup>
       <input
