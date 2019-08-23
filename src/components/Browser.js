@@ -24,7 +24,7 @@ export default function Browser({address, path}) {
       <Row className="flex-grow-1">
         <Col lg="3">
           <Card className="h-100">
-            <CardHeader>Directory Tree</CardHeader>
+            <CardHeader>Folder Tree</CardHeader>
             <div
               className="flex-grow-1"
               style={{height: 0, padding: 5, overflowY: 'auto'}}

@@ -11,6 +11,6 @@ export default async function rm(kernel, path, setProgress, setProgressText) {
     const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
     await rm(kernel, Path.join(path, name), setProgress, setProgressText)
   }
-  setProgressText(`Deleting directory ${path}`)
+  setProgressText(`Deleting folder ${path}`)
   await kernel.rmdir(utf8ToHex(path))
 }

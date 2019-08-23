@@ -1,6 +1,6 @@
 import * as Path from 'path'
-import React, {useState, useRef} from 'react'
-import {Form, FormGroup, FormFeedback, Input} from 'reactstrap'
+import React, {useState, useEffect, useRef} from 'react'
+import {Form, FormGroup, Input, Progress} from 'reactstrap'
 import Modal from './Modal'
 import {useKernel} from '../../web3/kernel'
 import {utf8ToHex} from 'web3-utils'
@@ -10,15 +10,22 @@ import useTrigger from '../../utils/trigger'
 
 export default function NewFolder({address, path, isOpen, toggle}) {
   const [name, setName] = useState('')
-  const [error, setError] = useState('')
+  const [progress, setProgress] = useState()
+  const [progressText, setProgressText] = useState('')
+  const [error, setError] = useState()
   const kernel = useKernel(address)
   const input = useRef()
+  useEffect(setProgress, [isOpen])
   useTrigger(isOpen, () => input.current.focus())
   async function handleOk(e) {
     e.preventDefault()
     if (name === '') return
     try {
-      await kernel.mkdir(utf8ToHex(Path.join(path, name)))
+      const path2 = Path.join(path, name)
+      setError()
+      setProgress(100)
+      setProgressText(`Creating folder ${path2}`)
+      await kernel.mkdir(utf8ToHex(path2))
       setName('')
       toggle()
       emit('refresh-path', path)
@@ -28,7 +35,13 @@ export default function NewFolder({address, path, isOpen, toggle}) {
     }
   }
   return (
-    <Modal isOpen={isOpen} title="New Folder" toggle={toggle} onOk={handleOk} allowOk={name !== ''}>
+    <Modal
+      isOpen={isOpen}
+      title="New Folder"
+      toggle={toggle}
+      onOk={handleOk}
+      allowOk={name !== '' && progress === undefined}
+      >
       <Form onSubmit={handleOk}>
         <FormGroup>
           <Input
@@ -41,11 +54,14 @@ export default function NewFolder({address, path, isOpen, toggle}) {
               setError('')
             }}
             spellCheck="false"
-            invalid={!!error}
           />
-          <FormFeedback>{error}</FormFeedback>
         </FormGroup>
       </Form>
+      {progress >= 0 && (error ?
+        <Progress animated color="danger" value={progress}>{error}</Progress>
+        :
+        <Progress animated value={progress}>{progressText}</Progress>
+      )}
     </Modal>
   )
 }

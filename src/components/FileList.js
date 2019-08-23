@@ -176,9 +176,14 @@ export default function FileList({address, path, onClickItem}) {
     setProgressTitle('Delete')
     try {
       setProgress(100)
+      setProgressError()
       await rm(kernel, path2, setProgress, setProgressText)
-    } catch (e) {}
-    setProgress()
+      setProgress()
+    } catch (e) {
+      const err = errno.code[e.reason]
+      setProgressError(err ? err.description : e.message)
+      setTimeout(setProgress, 3e3)
+    }
     emit('refresh-path', path)
   }
 
@@ -237,7 +242,7 @@ export default function FileList({address, path, onClickItem}) {
       <Table columns={columns} data={files} setSelectedRows={setSelectedRows} />
       <div className="text-center">
         {busy && <FontAwesomeIcon icon={faSpinner} spin />}
-        {error && <span>No such directory</span>}
+        {error && <span>No such folder</span>}
       </div>
       <FileView
         address={address}

@@ -36,7 +36,7 @@ export default function Properties({address, path, isOpen, toggle}) {
       type = 'Regular file'
       break
     case 2:
-      type = 'Directory'
+      type = 'Folder'
       break
     case 3:
       type = 'Symbolic link'
@@ -78,7 +78,7 @@ export default function Properties({address, path, isOpen, toggle}) {
           {stat.fileType == 2 ?
             <Row>
               <Label sm={4}>Contains:</Label>
-              <Label sm={8}>{Number(stat.entries)} file(s)</Label>
+              <Label sm={8}>{stat.entries - 2} file(s)</Label>
             </Row>
             :
             <Row>
