@@ -4,7 +4,7 @@ import moment from 'moment'
 import React, {useState, useEffect} from 'react'
 import {Row, Col, Form, FormGroup, Input, Label, Progress} from 'reactstrap'
 import {useAsync} from 'react-async-hook'
-import {utf8ToHex} from 'web3-utils'
+import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import Modal from './Modal'
 import {emit} from '../../utils/events'
 import {fileSize} from '../../utils/files'
@@ -22,6 +22,9 @@ export default function Properties({address, path, isOpen, toggle}) {
     if (!kernel || path === '' || !isOpen) return
     try {
       const stat = await kernel.stat(utf8ToHex(path))
+      if (stat.fileType == 3) {
+        stat.target = hexToUtf8(await kernel.readlink(utf8ToHex(path)))
+      }
       setStat(stat)
       setMode(stat.mode & 511)
     } catch (e) {
@@ -75,6 +78,12 @@ export default function Properties({address, path, isOpen, toggle}) {
             <Label sm={4}>Location:</Label>
             <Label sm={8}>{Path.dirname(path)}</Label>
           </Row>
+          {stat.fileType == 3 &&
+            <Row>
+              <Label sm={4}>Target of symlink:</Label>
+              <Label sm={8}>{stat.target}</Label>
+            </Row>
+          }
           {stat.fileType == 2 ?
             <Row>
               <Label sm={4}>Contains:</Label>
@@ -106,16 +115,19 @@ export default function Properties({address, path, isOpen, toggle}) {
             label="Owner permissions:"
             mode={mode >> 6 & 7}
             onChange={x => setMode(x<<6 | mode&63)}
+            disabled={stat.fileType == 3}
           />
           <Permissions
             label="Group permissions:"
             mode={mode >> 3 & 7}
             onChange={x => setMode(x<<3 | mode&455)}
+            disabled={stat.fileType == 3}
           />
           <Permissions
             label="Other permissions:"
             mode={mode >> 0 & 7}
             onChange={x => setMode(x | mode&504)}
+            disabled={stat.fileType == 3}
           />
         </FormGroup>
       </Form>
@@ -128,7 +140,7 @@ export default function Properties({address, path, isOpen, toggle}) {
   )
 }
 
-function Permissions({label, mode, onChange}) {
+function Permissions({label, mode, onChange, disabled}) {
   return (
     <Row style={{padding: '2px 0'}}>
       <Col sm={4}>{label}</Col>
@@ -139,6 +151,7 @@ function Permissions({label, mode, onChange}) {
               type="checkbox"
               checked={(mode & 4) > 0}
               onChange={() => onChange(mode ^ 4)}
+              disabled={disabled}
             /> Read
           </Label>
         </FormGroup>
@@ -148,6 +161,7 @@ function Permissions({label, mode, onChange}) {
               type="checkbox"
               checked={(mode & 2) > 0}
               onChange={() => onChange(mode ^ 2)}
+              disabled={disabled}
             /> Write
           </Label>
         </FormGroup>
@@ -157,6 +171,7 @@ function Permissions({label, mode, onChange}) {
               type="checkbox"
               checked={(mode & 1) > 0}
               onChange={() => onChange(mode ^ 1)}
+              disabled={disabled}
             /> Execute
           </Label>
         </FormGroup>

@@ -55,7 +55,7 @@ export default function FileList({address, path, onClickItem}) {
           .concat(sortBy(files, 'name'))
       )
     } catch (e) {
-      setError(e)
+      setError('No such folder')
     }
     setBusy(false)
   }, [kernel, path])
@@ -152,17 +152,26 @@ export default function FileList({address, path, onClickItem}) {
   const [showFileView, setShowFileView] = useState(false)
   const [fileViewPath, setFileViewPath] = useState()
 
-  function handleOpen(name) {
-    const path2 = Path.join(path, name)
-    const {fileType} = files.find(x => x.name === name)
-    switch (Number(fileType)) {
-      case 1:
-        setFileViewPath(path2)
-        setShowFileView(true)
-        break
-      case 2:
-        onClickItem(path2)
-        break
+  async function handleOpen(name) {
+    let path2 = Path.join(path, name)
+    let stat = files.find(x => x.name === name)
+    while (true) {
+      switch (Number(stat.fileType)) {
+        case 1:
+          setFileViewPath(path2)
+          return setShowFileView(true)
+        case 2:
+          return onClickItem(path2)
+        case 3:
+          try {
+            path2 = hexToUtf8(await kernel.readlink(utf8ToHex(path2)))
+            if (!Path.isAbsolute(path2)) path2 = Path.join(path, path2)
+            stat = await kernel.stat(utf8ToHex(path2))
+          } catch (e) {
+            return setError('Target of symlink not found')
+          }
+          break
+      }
     }
   }
 
@@ -242,7 +251,7 @@ export default function FileList({address, path, onClickItem}) {
       <Table columns={columns} data={files} setSelectedRows={setSelectedRows} />
       <div className="text-center">
         {busy && <FontAwesomeIcon icon={faSpinner} spin />}
-        {error && <span>No such folder</span>}
+        {error}
       </div>
       <FileView
         address={address}
