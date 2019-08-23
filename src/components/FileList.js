@@ -12,6 +12,7 @@ import FileIcon from './FileIcon'
 import Table from './Table'
 import FileView from './modals/FileView'
 import ProgressBar from './modals/ProgressBar'
+import Properties from './modals/Properties'
 import Rename from './modals/Rename'
 import {useKernel} from '../web3/kernel'
 import {fileMode, fileSize} from '../utils/files'
@@ -186,6 +187,10 @@ export default function FileList({address, path, onClickItem}) {
   function handleRename(name) {
     setRenamePath(Path.join(path, name))
   }
+  const [propertiesPath, setPropertiesPath] = useState('')
+  function handleProperties(name) {
+    setPropertiesPath(Path.join(path, name))
+  }
 
   function handleCut(name) {
     setCutFiles([Path.join(path, name)])
@@ -257,12 +262,20 @@ export default function FileList({address, path, onClickItem}) {
         <MenuItem divider />
         <MenuItem onClick={(e, {name}) => handleCut(name)}>Cut</MenuItem>
         <MenuItem onClick={(e, {name}) => handleCopy(name)}>Copy</MenuItem>
+        <MenuItem divider />
+        <MenuItem onClick={(e, {name}) => handleProperties(name)}>Properties</MenuItem>
       </ContextMenu>
       <Rename
         address={address}
         path={renamePath}
         isOpen={!!renamePath}
         toggle={() => setRenamePath('')}
+      />
+      <Properties
+        address={address}
+        path={propertiesPath}
+        isOpen={!!propertiesPath}
+        toggle={() => setPropertiesPath('')}
       />
     </>
   )

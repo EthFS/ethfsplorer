@@ -74,10 +74,12 @@ export default function FileView({address, path, isOpen, toggle}) {
           />
           <FormFeedback>{error}</FormFeedback>
         </FormGroup>
-        {text !== originalText &&
-          <FormText color="muted">
+        {text !== originalText ?
+          <FormText>
             Operations: {prefix.length < originalText.length ? `Truncate to ${prefix.length} bytes. ` : ''}{text.length > prefix.length ? `Append ${text.length - prefix.length} bytes.` : ''}
           </FormText>
+          :
+          <FormText>{text.length} bytes</FormText>
         }
       </Form>
       {progress >= 0 &&
