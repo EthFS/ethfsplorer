@@ -167,9 +167,8 @@ export default function FileList({address, path, onClickItem}) {
   }
 
   async function handleDownload(name) {
-    const path2 = Path.join(path, name)
     const file = files.find(x => x.name === name)
-    await download(kernel, path2, [file])
+    await download(kernel, path, [file])
   }
 
   async function handleDelete(name) {

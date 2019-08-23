@@ -1,11 +1,12 @@
 import * as Path from 'path'
 import errno from 'errno'
 import moment from 'moment'
-import React, {useState} from 'react'
-import {Row, Col, Form, FormGroup, Input, Label} from 'reactstrap'
+import React, {useState, useEffect} from 'react'
+import {Row, Col, Form, FormGroup, Input, Label, Progress} from 'reactstrap'
 import {useAsync} from 'react-async-hook'
 import {utf8ToHex} from 'web3-utils'
 import Modal from './Modal'
+import {emit} from '../../utils/events'
 import {fileSize} from '../../utils/files'
 import {useKernel} from '../../web3/kernel'
 
@@ -13,18 +14,22 @@ export default function Properties({address, path, isOpen, toggle}) {
   const kernel = useKernel(address)
   const [stat, setStat] = useState({})
   const [mode, setMode] = useState(0)
+  const [progress, setProgress] = useState()
+  const [progressText, setProgressText] = useState('')
   const [error, setError] = useState()
+  useEffect(setProgress, [isOpen])
   useAsync(async () => {
-    if (!kernel) return
+    if (!kernel || path === '' || !isOpen) return
     try {
       const stat = await kernel.stat(utf8ToHex(path))
       setStat(stat)
-      setMode(stat.mode)
+      setMode(stat.mode & 511)
     } catch (e) {
       const err = errno.code[e.reason]
+      setProgress(100)
       setError(err ? err.description : e.message)
     }
-  }, [kernel, path])
+  }, [kernel, path, isOpen])
   let type
   switch (Number(stat.fileType)) {
     case 1:
@@ -37,11 +42,27 @@ export default function Properties({address, path, isOpen, toggle}) {
       type = 'Symbolic link'
       break
   }
+  async function handleOk(e) {
+    e.preventDefault()
+    try {
+      setError()
+      setProgress(100)
+      setProgressText(`Changing mode for ${path}`)
+      await kernel.chmod(utf8ToHex(path), mode)
+      toggle()
+      emit('refresh-path', Path.dirname(path))
+    } catch (e) {
+      const err = errno.code[e.reason]
+      setError(err ? err.description : e.message)
+    }
+  }
   return (
     <Modal
       isOpen={isOpen}
       title={`Properties for ${Path.basename(path) || path}`}
       toggle={toggle}
+      onOk={handleOk}
+      allowOk={mode !== (stat.mode & 511) && progress === undefined}
       size="lg"
       >
       <Form>
@@ -98,6 +119,11 @@ export default function Properties({address, path, isOpen, toggle}) {
           />
         </FormGroup>
       </Form>
+      {progress >= 0 && (error ?
+        <Progress animated color="danger" value={progress}>{error}</Progress>
+        :
+        <Progress animated value={progress}>{progressText}</Progress>
+      )}
     </Modal>
   )
 }
