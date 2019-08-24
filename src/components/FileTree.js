@@ -23,15 +23,19 @@ export default function FileTree({
   const getFiles = useAsync(async () => {
     if (!kernel || !expanded) return
     setBusy(true)
-    const {fileType, entries} = await kernel.stat(utf8ToHex(path))
-    if (fileType != 2) return
-    const files = []
-    for (let i = 2; i < entries; i++) {
-      const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
-      const {fileType} = await kernel.stat(utf8ToHex(Path.join(path, name)))
-      if (fileType == 2) files.push(name)
-    }
-    setFiles(files.sort())
+    try {
+      const {fileType, entries} = await kernel.stat(utf8ToHex(path))
+      if (fileType != 2) return
+      const files = []
+      for (let i = 2; i < entries; i++) {
+        try {
+          const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
+          const {fileType} = await kernel.stat(utf8ToHex(Path.join(path, name)))
+          if (fileType == 2) files.push(name)
+        } catch (e) {}
+      }
+      setFiles(files.sort())
+    } catch (e) {}
     setBusy(false)
   }, [kernel, path, expanded])
   useEvent('show-path', showPath => {

@@ -38,7 +38,7 @@ export default function FileList({address, path, onClickItem}) {
       const files = [], dotfiles = []
       for (let i = 0; i < entries; i++) {
         const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
-        const stat = await kernel.stat(utf8ToHex(Path.join(path, name)))
+        const stat = await kernel.lstat(utf8ToHex(Path.join(path, name)))
         const size = stat.fileType == 2 ? undefined : Number(stat.size)
         const lastModified = moment(stat.lastModified * 1e3).format('DD MMM YYYY HH:mm')
         let arr
@@ -150,9 +150,9 @@ export default function FileList({address, path, onClickItem}) {
   const [fileViewPath, setFileViewPath] = useState()
 
   async function handleOpen(name) {
-    let path2 = Path.join(path, name)
+    const path2 = Path.join(path, name)
     let stat = files.find(x => x.name === name)
-    for (let i = 0; i < 50; i++) {
+    while (true) {
       switch (Number(stat.fileType)) {
         case 1:
           setFileViewPath(path2)
@@ -161,16 +161,13 @@ export default function FileList({address, path, onClickItem}) {
           return onClickItem(path2)
         case 3:
           try {
-            path2 = hexToUtf8(await kernel.readlink(utf8ToHex(path2)))
-            if (!Path.isAbsolute(path2)) path2 = Path.join(path, path2)
             stat = await kernel.stat(utf8ToHex(path2))
           } catch (e) {
-            return setError('Target of symbolic link not found')
+            return setError('Target not found or too many levels of symbolic links')
           }
           break
       }
     }
-    setError('Too many levels of symbolic links')
   }
 
   async function handleDownload(name) {

@@ -21,7 +21,7 @@ export default function Properties({address, path, isOpen, toggle}) {
   useAsync(async () => {
     if (!kernel || path === '' || !isOpen) return
     try {
-      const stat = await kernel.stat(utf8ToHex(path))
+      const stat = await kernel.lstat(utf8ToHex(path))
       if (stat.fileType == 3) {
         stat.target = hexToUtf8(await kernel.readlink(utf8ToHex(path)))
       }

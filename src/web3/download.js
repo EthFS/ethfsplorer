@@ -37,7 +37,7 @@ export default async function download(kernel, path, files, zip) {
         const files2 = []
         for (let i = 2; i < entries; i++) {
           const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path2), i))
-          const stat = await kernel.stat(utf8ToHex(Path.join(path2, name)))
+          const stat = await kernel.lstat(utf8ToHex(Path.join(path2, name)))
           files2.push({name, ...stat})
         }
         await download(kernel, path2, files2, zip.folder(name))

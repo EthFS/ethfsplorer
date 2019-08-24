@@ -2,7 +2,7 @@ import * as Path from 'path'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 
 export default async function rm(kernel, path, setProgress, setProgressText) {
-  const {fileType, entries} = await kernel.stat(utf8ToHex(path))
+  const {fileType, entries} = await kernel.lstat(utf8ToHex(path))
   if (fileType != 2) {
     setProgressText(`Deleting file ${path}`)
     return await kernel.unlink(utf8ToHex(path))
