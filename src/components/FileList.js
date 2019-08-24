@@ -1,10 +1,8 @@
 import * as Path from 'path'
 import React, {useState} from 'react'
-import {Alert} from 'reactstrap'
+import {Alert, Spinner} from 'reactstrap'
 import {useAsync} from 'react-async-hook'
 import {ContextMenu, MenuItem, ContextMenuTrigger} from 'react-contextmenu'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import errno from 'errno'
 import moment from 'moment'
 import {sortedIndexBy} from 'lodash'
@@ -246,7 +244,7 @@ export default function FileList({kernel, path, onClickItem}) {
       </Alert>
       <Table columns={columns} data={files} setSelectedRows={setSelectedRows} />
       <div className="text-center">
-        {busy && <FontAwesomeIcon icon={faSpinner} spin />}
+        {busy && <Spinner color="secondary" />}
       </div>
       <FileView
         kernel={kernel}

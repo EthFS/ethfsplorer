@@ -8,6 +8,7 @@ import {faEdit} from '@fortawesome/free-solid-svg-icons'
 import {useAsync} from 'react-async-hook'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import Modal from './Modal'
+import Tabs from '../Tabs'
 import {emit} from '../../utils/events'
 import {fileSize} from '../../utils/files'
 import useAccounts from '../../web3/accounts'
@@ -131,119 +132,129 @@ export default function Properties({kernel, path, isOpen, toggle}) {
       allowOk={mode !== (stat.mode & 511) && progress === undefined}
       size="lg"
       >
-      <Form>
-        <FormGroup>
-          <Row>
-            <Label sm={4}>Type of file:</Label>
-            <Label sm={8}>{type}</Label>
-          </Row>
-          <Row>
-            <Label sm={4}>Location:</Label>
-            <Label sm={8}>{Path.dirname(path)}</Label>
-          </Row>
-          {stat.fileType == 3 &&
+      <Tabs labels={['General', 'Extended Attributes']}>
+        <Form>
+          <FormGroup>
             <Row>
-              <Label sm={4}>Target of symbolic link:</Label>
-              <Label sm={8}>{stat.target}</Label>
+              <Label sm={4}>Type of file:</Label>
+              <Label sm={8}>{type}</Label>
             </Row>
-          }
-          {stat.fileType == 2 ?
             <Row>
-              <Label sm={4}>Contains:</Label>
-              <Label sm={8}>{stat.entries - 2} file(s)</Label>
+              <Label sm={4}>Location:</Label>
+              <Label sm={8}>{Path.dirname(path)}</Label>
             </Row>
-            :
+            {stat.fileType == 3 &&
+              <Row>
+                <Label sm={4}>Target of symbolic link:</Label>
+                <Label sm={8}>{stat.target}</Label>
+              </Row>
+            }
+            {stat.fileType == 2 ?
+              <Row>
+                <Label sm={4}>Contains:</Label>
+                <Label sm={8}>{stat.entries - 2} file(s)</Label>
+              </Row>
+              :
+              <Row>
+                <Label sm={4}>Size:</Label>
+                <Label sm={8}>{fileSize(Number(stat.size))}</Label>
+              </Row>
+            }
             <Row>
-              <Label sm={4}>Size:</Label>
-              <Label sm={8}>{fileSize(Number(stat.size))}</Label>
+              <Label sm={4}>Last modified:</Label>
+              <Label sm={8}>{moment(stat.lastModified * 1e3).format('DD MMMM YYYY HH:mm:ss')}</Label>
             </Row>
-          }
-          <Row>
-            <Label sm={4}>Last modified:</Label>
-            <Label sm={8}>{moment(stat.lastModified * 1e3).format('DD MMMM YYYY HH:mm:ss')}</Label>
-          </Row>
-        </FormGroup>
-        <FormGroup>
-          <Row>
-            <Label sm={4}>Owner address:</Label>
-            <Label sm={8}>
-              {editOwner ?
-                <Input
-                  type="text"
-                  value={newOwner}
-                  placeholder="Enter address"
-                  onChange={e => setNewOwner(e.target.value)}
-                  onKeyDown={handleChangeOwner}
-                  spellCheck="false"
-                />
-                :
-                <>
-                  {stat.owner}
-                  {isOwner && stat.fileType != 3 &&
-                    <FontAwesomeIcon
-                      style={{cursor: 'pointer', marginLeft: 10}}
-                      icon={faEdit}
-                      onClick={() => {
-                        setNewOwner(stat.owner)
-                        setEditOwner(true)
-                      }}
-                    />
-                  }
-                </>
-              }
-            </Label>
-          </Row>
-          <Row>
-            <Label sm={4}>Group address:</Label>
-            <Label sm={8}>
-              {editGroup ?
-                <Input
-                  type="text"
-                  value={newGroup}
-                  placeholder="Enter address"
-                  onChange={e => setNewGroup(e.target.value)}
-                  onKeyDown={handleChangeGroup}
-                  spellCheck="false"
-                />
-                :
-                <>
-                  {stat.group}
-                  {isOwner && stat.fileType != 3 &&
-                    <FontAwesomeIcon
-                      style={{cursor: 'pointer', marginLeft: 10}}
-                      icon={faEdit}
-                      onClick={() => {
-                        setNewGroup(stat.group)
-                        setEditGroup(true)
-                      }}
-                    />
-                  }
-                </>
-              }
-            </Label>
-          </Row>
-        </FormGroup>
-        <FormGroup>
-          <Permissions
-            label="Owner permissions:"
-            mode={mode >> 6 & 7}
-            onChange={x => setMode(x<<6 | mode&63)}
-            disabled={!isOwner || stat.fileType == 3}
-          />
-          <Permissions
-            label="Group permissions:"
-            mode={mode >> 3 & 7}
-            onChange={x => setMode(x<<3 | mode&455)}
-            disabled={!isOwner || stat.fileType == 3}
-          />
-          <Permissions
-            label="Other permissions:"
-            mode={mode >> 0 & 7}
-            onChange={x => setMode(x | mode&504)}
-            disabled={!isOwner || stat.fileType == 3}
-          />
-        </FormGroup>
-      </Form>
+          </FormGroup>
+          <FormGroup>
+            <Row>
+              <Label sm={4}>Owner address:</Label>
+              <Label sm={8}>
+                {editOwner ?
+                  <Input
+                    type="text"
+                    value={newOwner}
+                    placeholder="Enter address"
+                    onChange={e => setNewOwner(e.target.value)}
+                    onKeyDown={handleChangeOwner}
+                    spellCheck="false"
+                  />
+                  :
+                  <>
+                    {stat.owner}
+                    {isOwner && stat.fileType != 3 &&
+                      <FontAwesomeIcon
+                        style={{cursor: 'pointer', marginLeft: 10}}
+                        icon={faEdit}
+                        onClick={() => {
+                          setNewOwner(stat.owner)
+                          setEditOwner(true)
+                        }}
+                      />
+                    }
+                  </>
+                }
+              </Label>
+            </Row>
+            <Row>
+              <Label sm={4}>Group address:</Label>
+              <Label sm={8}>
+                {editGroup ?
+                  <Input
+                    type="text"
+                    value={newGroup}
+                    placeholder="Enter address"
+                    onChange={e => setNewGroup(e.target.value)}
+                    onKeyDown={handleChangeGroup}
+                    spellCheck="false"
+                  />
+                  :
+                  <>
+                    {stat.group}
+                    {isOwner && stat.fileType != 3 &&
+                      <FontAwesomeIcon
+                        style={{cursor: 'pointer', marginLeft: 10}}
+                        icon={faEdit}
+                        onClick={() => {
+                          setNewGroup(stat.group)
+                          setEditGroup(true)
+                        }}
+                      />
+                    }
+                  </>
+                }
+              </Label>
+            </Row>
+          </FormGroup>
+          <FormGroup>
+            <Permissions
+              label="Owner permissions:"
+              mode={mode >> 6 & 7}
+              onChange={x => setMode(x<<6 | mode&63)}
+              disabled={!isOwner || stat.fileType == 3}
+            />
+            <Permissions
+              label="Group permissions:"
+              mode={mode >> 3 & 7}
+              onChange={x => setMode(x<<3 | mode&455)}
+              disabled={!isOwner || stat.fileType == 3}
+            />
+            <Permissions
+              label="Other permissions:"
+              mode={mode >> 0 & 7}
+              onChange={x => setMode(x | mode&504)}
+              disabled={!isOwner || stat.fileType == 3}
+            />
+          </FormGroup>
+        </Form>
+        {stat.fileType == 1 ?
+          <Form>
+          </Form>
+          :
+          <span>
+            Extended attributes are only allowed for regular files.
+          </span>
+        }
+      </Tabs>
       {progress >= 0 && (error ?
         <Progress animated color="danger" value={progress}>{error}</Progress>
         :

@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
-import {Form, FormGroup, FormText, FormFeedback, Input, Progress} from 'reactstrap'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faSpinner} from '@fortawesome/free-solid-svg-icons'
+import {
+  Form, FormGroup, FormText, FormFeedback,
+  Input, Progress, Spinner,
+} from 'reactstrap'
 import Modal from './Modal'
 import {useAsync} from 'react-async-hook'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
@@ -48,10 +49,10 @@ export default function FileView({kernel, path, isOpen, toggle}) {
     <Modal
       isOpen={isOpen}
       title={
-        <span>
-          {`Viewing ${path}`}
-          {busy && <FontAwesomeIcon style={{marginLeft: 5}} icon={faSpinner} spin />}
-        </span>
+        <div className="d-flex align-items-center">
+          Viewing {path}
+          {busy && <Spinner style={{marginLeft: 5}} size="sm" color="secondary" />}
+        </div>
       }
       toggle={toggle}
       labelOk="Save"

@@ -1,8 +1,7 @@
 import * as Path from 'path'
 import React, {useState} from 'react'
+import {Spinner} from 'reactstrap'
 import {useAsync} from 'react-async-hook'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import FileIcon from './FileIcon'
 import {useEvent} from '../utils/events'
@@ -76,7 +75,7 @@ export default function FileTree({
           >
           {Path.basename(path) || path}
         </div>
-        {busy && <FontAwesomeIcon icon={faSpinner} spin />}
+        {busy && <Spinner size="sm" color="secondary" />}
       </div>
       {expanded &&
         <div style={{marginLeft: 20}}>
