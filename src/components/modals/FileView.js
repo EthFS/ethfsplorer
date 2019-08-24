@@ -4,20 +4,18 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import Modal from './Modal'
 import {useAsync} from 'react-async-hook'
-import {useKernel} from '../../web3/kernel'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import common from 'common-prefix'
 import errno from 'errno'
 import write from './write'
 
-export default function FileView({address, path, isOpen, toggle}) {
+export default function FileView({kernel, path, isOpen, toggle}) {
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [progress, setProgress] = useState()
   const [progressText, setProgressText] = useState('')
   const [originalText, setOriginalText] = useState('')
-  const kernel = useKernel(address)
   useAsync(async () => {
     if (!kernel || path === undefined || !isOpen) return
     setText('')

@@ -5,17 +5,15 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import FileIcon from './FileIcon'
-import {useKernel} from '../web3/kernel'
 import {useEvent} from '../utils/events'
 
 export default function FileTree({
-  address,
+  kernel,
   path,
   showPath: _showPath,
   selectPath,
   onClickItem,
 }) {
-  const kernel = useKernel(address)
   const [files, setFiles] = useState([])
   const [busy, setBusy] = useState(false)
   const [showPath, setShowPath] = useState(_showPath)
@@ -85,7 +83,7 @@ export default function FileTree({
           {files.map(name =>
             <FileTree
               key={name}
-              address={address}
+              kernel={kernel}
               path={Path.join(path, name)}
               showPath={showPath}
               selectPath={selectPath}

@@ -11,11 +11,9 @@ import Modal from './Modal'
 import {emit} from '../../utils/events'
 import {fileSize} from '../../utils/files'
 import useAccounts from '../../web3/accounts'
-import {useKernel} from '../../web3/kernel'
 
-export default function Properties({address, path, isOpen, toggle}) {
+export default function Properties({kernel, path, isOpen, toggle}) {
   const accounts = useAccounts()
-  const kernel = useKernel(address)
   const [stat, setStat] = useState({})
   const [mode, setMode] = useState(0)
   const [progress, setProgress] = useState()

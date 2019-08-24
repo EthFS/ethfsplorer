@@ -3,17 +3,15 @@ import React, {useState, useRef} from 'react'
 import {Form, FormGroup, FormFeedback, Input, Progress} from 'reactstrap'
 import Modal from './Modal'
 import constants from '../../web3/constants'
-import {useKernel} from '../../web3/kernel'
 import useTrigger from '../../utils/trigger'
 import write from './write'
 
-export default function NewFile({address, path, isOpen, toggle}) {
+export default function NewFile({kernel, path, isOpen, toggle}) {
   const [name, setName] = useState('')
   const [text, setText] = useState('')
   const [error, setError] = useState('')
   const [progress, setProgress] = useState()
   const [progressText, setProgressText] = useState('')
-  const kernel = useKernel(address)
   const input = useRef()
   useTrigger(isOpen, () => input.current.focus())
   async function handleOk(e) {

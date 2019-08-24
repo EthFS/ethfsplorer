@@ -5,9 +5,11 @@ import FileList from './FileList'
 import FileTree from './FileTree'
 import Toolbar from './Toolbar'
 import {emit} from '../utils/events'
+import useKernel from '../web3/kernel'
 
 export default function Browser({address, path}) {
   if (!path) path = '/'
+  const kernel = useKernel(address)
   const [fileListPath, setFileListPath] = useState(path)
   function handleChangePath(path) {
     setFileListPath(path)
@@ -17,7 +19,7 @@ export default function Browser({address, path}) {
     <Container fluid className="d-flex flex-column h-100">
       <Row>
         <Col>
-          <Toolbar address={address} path={fileListPath} />
+          <Toolbar kernel={kernel} path={fileListPath} />
           <div style={{marginTop: 5}} />
         </Col>
       </Row>
@@ -30,7 +32,7 @@ export default function Browser({address, path}) {
               style={{height: 0, padding: 5, overflowY: 'auto'}}
               >
               <FileTree
-                address={address}
+                kernel={kernel}
                 path={path}
                 showPath={path}
                 selectPath={fileListPath}
@@ -46,7 +48,7 @@ export default function Browser({address, path}) {
             style={{height: 0, marginTop: 5, overflowY: 'auto'}}
             >
             <FileList
-              address={address}
+              kernel={kernel}
               path={fileListPath}
               onClickItem={handleChangePath}
             />

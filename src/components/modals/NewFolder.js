@@ -2,18 +2,16 @@ import * as Path from 'path'
 import React, {useState, useEffect, useRef} from 'react'
 import {Form, FormGroup, Input, Progress} from 'reactstrap'
 import Modal from './Modal'
-import {useKernel} from '../../web3/kernel'
 import {utf8ToHex} from 'web3-utils'
 import errno from 'errno'
 import {emit} from '../../utils/events'
 import useTrigger from '../../utils/trigger'
 
-export default function NewFolder({address, path, isOpen, toggle}) {
+export default function NewFolder({kernel, path, isOpen, toggle}) {
   const [name, setName] = useState('')
   const [progress, setProgress] = useState()
   const [progressText, setProgressText] = useState('')
   const [error, setError] = useState()
-  const kernel = useKernel(address)
   const input = useRef()
   useEffect(setProgress, [isOpen])
   useTrigger(isOpen, () => input.current.focus())

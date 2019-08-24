@@ -11,11 +11,9 @@ import NewFolder from './modals/NewFolder'
 import NewLink from './modals/NewLink'
 import ProgressBar from './modals/ProgressBar'
 import {emit} from '../utils/events'
-import {useKernel} from '../web3/kernel'
 import upload from '../web3/upload'
 
-export default function Toolbar({address, path}) {
-  const kernel = useKernel(address)
+export default function Toolbar({kernel, path}) {
   const [progressTitle, setProgressTitle] = useState('')
   const [progress, setProgress] = useState()
   const [progressText, setProgressText] = useState('')
@@ -25,21 +23,21 @@ export default function Toolbar({address, path}) {
     <>
       <ButtonGroup>
         <ToolbarModal
-          address={address}
+          kernel={kernel}
           path={path}
           icon={faFile}
           label="New File"
           modal={NewFile}
         />
         <ToolbarModal
-          address={address}
+          kernel={kernel}
           path={path}
           icon={faFolder}
           label="New Folder"
           modal={NewFolder}
         />
         <ToolbarModal
-          address={address}
+          kernel={kernel}
           path={path}
           icon={faLink}
           label="New Link"
@@ -118,7 +116,7 @@ export default function Toolbar({address, path}) {
   )
 }
 
-function ToolbarModal({address, path, icon, label, modal: Modal}) {
+function ToolbarModal({kernel, path, icon, label, modal: Modal}) {
   const [isOpen, setOpen] = useState(false)
   return (
     <>
@@ -128,7 +126,7 @@ function ToolbarModal({address, path, icon, label, modal: Modal}) {
         onClick={() => setOpen(true)}
       />
       <Modal
-        address={address}
+        kernel={kernel}
         path={path}
         isOpen={isOpen}
         toggle={() => setOpen(!isOpen)}
