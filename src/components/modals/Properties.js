@@ -80,7 +80,7 @@ export default function Properties({address, path, isOpen, toggle}) {
           </Row>
           {stat.fileType == 3 &&
             <Row>
-              <Label sm={4}>Target of symlink:</Label>
+              <Label sm={4}>Target of symbolic link:</Label>
               <Label sm={8}>{stat.target}</Label>
             </Row>
           }

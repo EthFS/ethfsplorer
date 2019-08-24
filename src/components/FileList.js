@@ -1,12 +1,13 @@
 import * as Path from 'path'
 import React, {useState} from 'react'
+import {Alert} from 'reactstrap'
 import {useAsync} from 'react-async-hook'
 import {ContextMenu, MenuItem, ContextMenuTrigger} from 'react-contextmenu'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 import errno from 'errno'
 import moment from 'moment'
-import {sortBy} from 'lodash'
+import {sortedIndexBy} from 'lodash'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import FileIcon from './FileIcon'
 import Table from './Table'
@@ -46,14 +47,10 @@ export default function FileList({address, path, onClickItem}) {
         } else {
           arr = name[0] === '.' ? dotfiles : files
         }
-        arr.push({name, ...stat, size, lastModified})
+        const file = {name, ...stat, size, lastModified}
+        arr.splice(sortedIndexBy(arr, file, 'name'), 0, file)
+        setFiles(dotdirs.concat(dirs).concat(dotfiles).concat(files))
       }
-      setFiles(
-        sortBy(dotdirs, 'name')
-          .concat(sortBy(dirs, 'name'))
-          .concat(sortBy(dotfiles, 'name'))
-          .concat(sortBy(files, 'name'))
-      )
     } catch (e) {
       setError('No such folder')
     }
@@ -155,7 +152,7 @@ export default function FileList({address, path, onClickItem}) {
   async function handleOpen(name) {
     let path2 = Path.join(path, name)
     let stat = files.find(x => x.name === name)
-    while (true) {
+    for (let i = 0; i < 50; i++) {
       switch (Number(stat.fileType)) {
         case 1:
           setFileViewPath(path2)
@@ -168,11 +165,12 @@ export default function FileList({address, path, onClickItem}) {
             if (!Path.isAbsolute(path2)) path2 = Path.join(path, path2)
             stat = await kernel.stat(utf8ToHex(path2))
           } catch (e) {
-            return setError('Target of symlink not found')
+            return setError('Target of symbolic link not found')
           }
           break
       }
     }
+    setError('Too many levels of symbolic links')
   }
 
   async function handleDownload(name) {
@@ -248,10 +246,12 @@ export default function FileList({address, path, onClickItem}) {
 
   return (
     <>
+      <Alert color="danger" isOpen={!!error} toggle={() => setError()}>
+        {error}
+      </Alert>
       <Table columns={columns} data={files} setSelectedRows={setSelectedRows} />
       <div className="text-center">
         {busy && <FontAwesomeIcon icon={faSpinner} spin />}
-        {error}
       </div>
       <FileView
         address={address}
