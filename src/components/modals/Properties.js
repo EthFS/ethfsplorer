@@ -179,7 +179,7 @@ export default function Properties({kernel, path, isOpen, toggle}) {
                 :
                 <>
                   {stat.owner}
-                  {isOwner &&
+                  {isOwner && stat.fileType != 3 &&
                     <FontAwesomeIcon
                       style={{cursor: 'pointer', marginLeft: 10}}
                       icon={faEdit}
@@ -208,7 +208,7 @@ export default function Properties({kernel, path, isOpen, toggle}) {
                 :
                 <>
                   {stat.group}
-                  {isOwner &&
+                  {isOwner && stat.fileType != 3 &&
                     <FontAwesomeIcon
                       style={{cursor: 'pointer', marginLeft: 10}}
                       icon={faEdit}
