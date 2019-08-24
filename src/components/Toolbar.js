@@ -2,12 +2,13 @@ import React, {useState, useRef} from 'react'
 import {Button, ButtonGroup, Tooltip} from 'reactstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {
-  faFile, faFolder, faRedo, faTrash, faDownload, faUpload,
-  faCut, faCopy, faPaste,
+  faFile, faFolder, faLink, faRedo, faTrash,
+  faDownload, faUpload, faCut, faCopy, faPaste,
 } from '@fortawesome/free-solid-svg-icons'
 import {uniqueId} from 'lodash'
 import NewFile from './modals/NewFile'
 import NewFolder from './modals/NewFolder'
+import NewLink from './modals/NewLink'
 import ProgressBar from './modals/ProgressBar'
 import {emit} from '../utils/events'
 import {useKernel} from '../web3/kernel'
@@ -36,6 +37,13 @@ export default function Toolbar({address, path}) {
           icon={faFolder}
           label="New Folder"
           modal={NewFolder}
+        />
+        <ToolbarModal
+          address={address}
+          path={path}
+          icon={faLink}
+          label="New Link"
+          modal={NewLink}
         />
       </ButtonGroup>
       <ButtonGroup style={{marginLeft: 5}}>
