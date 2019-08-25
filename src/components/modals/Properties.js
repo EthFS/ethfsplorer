@@ -9,6 +9,7 @@ import {useAsync} from 'react-async-hook'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import Modal from './Modal'
 import Tabs from '../Tabs'
+import Xattr from './Xattr'
 import {emit} from '../../utils/events'
 import {fileSize} from '../../utils/files'
 import useAccounts from '../../web3/accounts'
@@ -247,8 +248,13 @@ export default function Properties({kernel, path, isOpen, toggle}) {
           </FormGroup>
         </Form>
         {stat.fileType == 1 ?
-          <Form>
-          </Form>
+          <Xattr
+            kernel={kernel}
+            path={path}
+            setProgress={setProgress}
+            setProgressText={setProgressText}
+            setError={setError}
+          />
           :
           <span>
             Extended attributes are only allowed for regular files.

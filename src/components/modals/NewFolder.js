@@ -49,7 +49,7 @@ export default function NewFolder({kernel, path, isOpen, toggle}) {
             placeholder="Enter name"
             onChange={e => {
               setName(e.target.value)
-              setError('')
+              setProgress()
             }}
             spellCheck="false"
           />

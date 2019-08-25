@@ -4,7 +4,7 @@ import Explorer from './components/Explorer'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-const urlParams = new URLSearchParams(window.location.search)
+const urlParams = new URLSearchParams(location.search)
 const address = urlParams.get('address')
 
 render(
