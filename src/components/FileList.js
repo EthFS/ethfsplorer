@@ -210,12 +210,12 @@ export default function FileList({kernel, path, onClickItem}) {
   const columns = React.useMemo(() => [
     {
       id: 'selection',
-      Header: ({ getToggleAllRowsSelectedProps }) => (
+      Header: ({getToggleAllRowsSelectedProps}) => (
         <div>
           <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
         </div>
       ),
-      Cell: ({ row }) => (
+      Cell: ({row}) => (
         <div>
           <input type="checkbox" {...row.getToggleRowSelectedProps()} />
         </div>

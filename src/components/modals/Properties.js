@@ -42,8 +42,8 @@ export default function Properties({kernel, path, isOpen, toggle}) {
       setMode(stat.mode & 511)
     } catch (e) {
       const err = errno.code[e.reason]
-      setProgress(100)
       setError(err ? err.description : e.message)
+      setProgress(100)
     }
   }, [kernel, path, isOpen])
   const isOwner = (accounts[0] || '').toLowerCase() === (stat.owner || '').toLowerCase()
