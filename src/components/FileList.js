@@ -18,6 +18,8 @@ import {emit, useEvent} from '../utils/events'
 import download from '../web3/download'
 import rm from '../web3/rm'
 
+import '../styles/react-contextmenu.css'
+
 export default function FileList({kernel, path, onClickItem}) {
   const [files, setFiles] = useState([])
   const [busy, setBusy] = useState(false)

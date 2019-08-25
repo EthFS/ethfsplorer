@@ -7,7 +7,7 @@ import Toolbar from './Toolbar'
 import {emit} from '../utils/events'
 import useKernel from '../web3/kernel'
 
-export default function Browser({address, path}) {
+export default function Explorer({address, path}) {
   if (!path) path = '/'
   const kernel = useKernel(address)
   const [fileListPath, setFileListPath] = useState(path)
