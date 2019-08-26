@@ -27,6 +27,7 @@ export default function Xattr({
           const name = await kernel.readkeyPath(utf8ToHex(path), i)
           if (!name) continue
           const value = await kernel.readPath(utf8ToHex(path), name)
+          if (!value) continue
           const attr = {
             name: hexToUtf8(name),
             value: hexToUtf8(value),
@@ -77,7 +78,7 @@ export default function Xattr({
       const buf = Buffer.from(value)
       const [,e] = await write(kernel, fd, utf8ToHex(name), buf, buf.length, x => {
         setProgress(100 * x/buf.length)
-        setProgressText(`Writing ${name}: ${x} / ${buf.length} bytes`)
+        setProgressText(`Setting value for ${name}: ${x} / ${buf.length} bytes`)
       })
       if (e) throw e
       setProgressText(`Closing ${path}`)
@@ -171,8 +172,13 @@ function SetXattr({isOpen, toggle, name, value, onOk}) {
   })
   function handleOk(e) {
     e.preventDefault()
+    if (!allowOk()) return
     toggle()
     onOk(newName, newValue)
+  }
+  function allowOk() {
+    return newName !== '' && newValue !== '' &&
+      (newName !== name || newValue !== value)
   }
   return (
     <Modal
@@ -180,7 +186,7 @@ function SetXattr({isOpen, toggle, name, value, onOk}) {
       title="Set Extended Attribute"
       toggle={toggle}
       onOk={handleOk}
-      allowOk={newName !== '' && newValue !== '' && (newName !== name || newValue !== value)}
+      allowOk={allowOk()}
       >
       <Form onSubmit={handleOk}>
         <FormGroup>
@@ -190,6 +196,7 @@ function SetXattr({isOpen, toggle, name, value, onOk}) {
             value={newName}
             placeholder="Enter name"
             onChange={e => setNewName(e.target.value)}
+            onKeyUp={e => e.key === 'Enter' && handleOk(e)}
             spellCheck="false"
           />
         </FormGroup>
@@ -199,6 +206,7 @@ function SetXattr({isOpen, toggle, name, value, onOk}) {
             value={newValue}
             placeholder="Enter value"
             onChange={e => setNewValue(e.target.value)}
+            onKeyUp={e => e.key === 'Enter' && handleOk(e)}
             spellCheck="false"
           />
         </FormGroup>
