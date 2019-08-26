@@ -1,5 +1,5 @@
 import React, {useState, useRef} from 'react'
-import {Button, Form, FormGroup, Input} from 'reactstrap'
+import {Button, Form, FormGroup, Input, Spinner} from 'reactstrap'
 import {useAsync} from 'react-async-hook'
 import errno from 'errno'
 import {sortedIndexBy} from 'lodash'
@@ -14,10 +14,12 @@ export default function Xattr({
   kernel, path, setProgress, setProgressText, setError,
 }) {
   const [attrs, setAttrs] = useState([])
+  const [busy, setBusy] = useState(false)
   const [selectedRows, setSelectedRows] = useState([])
   const getAttrs = useAsync(async () => {
     if (!kernel || path === '') return
     try {
+      setBusy(true)
       const attrs = []
       const {fileType, entries} = await kernel.stat(utf8ToHex(path))
       if (fileType == 1) {
@@ -38,6 +40,7 @@ export default function Xattr({
       setError(err ? err.description : e.message)
       setProgress(100)
     }
+    setBusy(false)
   }, [kernel, path])
   const [showEdit, setShowEdit] = useState(false)
   const [editName, setEditName] = useState('')
@@ -128,17 +131,23 @@ export default function Xattr({
   ], [path, attrs])
   return (
     <Form>
-      <Table columns={columns} data={attrs} setSelectedRows={setSelectedRows} />
-      <FormGroup>
+      <div style={{marginBottom: 10, maxHeight: '45vh', overflowY: 'auto'}}>
+        <Table columns={columns} data={attrs} setSelectedRows={setSelectedRows} />
+      </div>
+      <FormGroup className="d-flex align-items-center">
         <Button color="primary" onClick={handleAdd}>
           Add
-        </Button>{' '}
+        </Button>
+        <div style={{marginLeft: 5}} />
         <Button color="secondary" onClick={handleModify} disabled={!selectedRows.length}>
           Modify
-        </Button>{' '}
+        </Button>
+        <div style={{marginLeft: 5}} />
         <Button color="danger" onClick={handleRemove} disabled={!selectedRows.length}>
           Remove
         </Button>
+        <div style={{marginLeft: 5}} />
+        {busy && <Spinner color="secondary" />}
       </FormGroup>
       <SetXattr
         isOpen={showEdit}
