@@ -1,0 +1,561 @@
+[
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "result",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      },
+      {
+        "name": "flags",
+        "type": "uint256"
+      }
+    ],
+    "name": "open",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "fd",
+        "type": "uint256"
+      },
+      {
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "readkey",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      },
+      {
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "readkeyPath",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "fd",
+        "type": "uint256"
+      },
+      {
+        "name": "key",
+        "type": "bytes"
+      }
+    ],
+    "name": "read",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      },
+      {
+        "name": "key",
+        "type": "bytes"
+      }
+    ],
+    "name": "readPath",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "fd",
+        "type": "uint256"
+      },
+      {
+        "name": "key",
+        "type": "bytes"
+      },
+      {
+        "name": "value",
+        "type": "bytes"
+      }
+    ],
+    "name": "write",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "fd",
+        "type": "uint256"
+      },
+      {
+        "name": "key",
+        "type": "bytes"
+      },
+      {
+        "name": "len",
+        "type": "uint256"
+      }
+    ],
+    "name": "truncate",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "fd",
+        "type": "uint256"
+      },
+      {
+        "name": "key",
+        "type": "bytes"
+      }
+    ],
+    "name": "clear",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "fd",
+        "type": "uint256"
+      }
+    ],
+    "name": "close",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "source",
+        "type": "bytes"
+      },
+      {
+        "name": "target",
+        "type": "bytes"
+      }
+    ],
+    "name": "link",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      }
+    ],
+    "name": "unlink",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "source",
+        "type": "bytes"
+      },
+      {
+        "name": "target",
+        "type": "bytes"
+      }
+    ],
+    "name": "symlink",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      }
+    ],
+    "name": "readlink",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "source",
+        "type": "bytes"
+      },
+      {
+        "name": "target",
+        "type": "bytes"
+      }
+    ],
+    "name": "move",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "source",
+        "type": "bytes"
+      },
+      {
+        "name": "target",
+        "type": "bytes"
+      }
+    ],
+    "name": "copy",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      },
+      {
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "name": "group",
+        "type": "address"
+      }
+    ],
+    "name": "chown",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      },
+      {
+        "name": "mode",
+        "type": "uint16"
+      }
+    ],
+    "name": "chmod",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getcwd",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      }
+    ],
+    "name": "chdir",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      }
+    ],
+    "name": "mkdir",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      }
+    ],
+    "name": "rmdir",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      }
+    ],
+    "name": "stat",
+    "outputs": [
+      {
+        "name": "fileType",
+        "type": "uint8"
+      },
+      {
+        "name": "mode",
+        "type": "uint16"
+      },
+      {
+        "name": "ino",
+        "type": "uint256"
+      },
+      {
+        "name": "links",
+        "type": "uint256"
+      },
+      {
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "name": "group",
+        "type": "address"
+      },
+      {
+        "name": "entries",
+        "type": "uint256"
+      },
+      {
+        "name": "size",
+        "type": "uint256"
+      },
+      {
+        "name": "lastModified",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "path",
+        "type": "bytes"
+      }
+    ],
+    "name": "lstat",
+    "outputs": [
+      {
+        "name": "fileType",
+        "type": "uint8"
+      },
+      {
+        "name": "mode",
+        "type": "uint16"
+      },
+      {
+        "name": "ino",
+        "type": "uint256"
+      },
+      {
+        "name": "links",
+        "type": "uint256"
+      },
+      {
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "name": "group",
+        "type": "address"
+      },
+      {
+        "name": "entries",
+        "type": "uint256"
+      },
+      {
+        "name": "size",
+        "type": "uint256"
+      },
+      {
+        "name": "lastModified",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "fd",
+        "type": "uint256"
+      }
+    ],
+    "name": "fstat",
+    "outputs": [
+      {
+        "name": "fileType",
+        "type": "uint8"
+      },
+      {
+        "name": "mode",
+        "type": "uint16"
+      },
+      {
+        "name": "ino",
+        "type": "uint256"
+      },
+      {
+        "name": "links",
+        "type": "uint256"
+      },
+      {
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "name": "group",
+        "type": "address"
+      },
+      {
+        "name": "entries",
+        "type": "uint256"
+      },
+      {
+        "name": "size",
+        "type": "uint256"
+      },
+      {
+        "name": "lastModified",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

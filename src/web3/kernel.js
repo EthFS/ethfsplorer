@@ -7,7 +7,7 @@ export default function useKernel(address) {
   const accounts = useAccounts()
   const [kernel, setKernel] = useState()
   useAsync(async () => {
-    const Kernel = contract(require('../../artifacts/Kernel'))
+    const Kernel = contract({abi: require('./Kernel.abi')})
     Kernel.setProvider(ethereum)
     await ethereum.enable()
     Kernel.defaults({from: accounts[0]})

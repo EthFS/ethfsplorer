@@ -1,0 +1,10 @@
+{
+  "O_RDONLY": "0x0000",
+  "O_WRONLY": "0x0001",
+  "O_RDWR": "0x0002",
+  "O_ACCMODE": "0x0003",
+  "O_CREAT": "0x0100",
+  "O_EXCL": "0x0200",
+  "O_DIRECTORY": "0x00200000",
+  "O_NOFOLLOW": "0x00400000"
+}
