@@ -50,7 +50,7 @@ export default function FileList({kernel, path, onClickItem}) {
         setFiles(dotdirs.concat(dirs).concat(dotfiles).concat(files))
       }
     } catch (e) {
-      setError('No such folder')
+      setError('No such folder or permission denied')
     }
     setBusy(false)
   }, [kernel, path])
