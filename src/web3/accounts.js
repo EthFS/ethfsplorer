@@ -5,13 +5,15 @@ import Eth from 'web3-eth'
 export default function useAccounts() {
   const [accounts, setAccounts] = useState([])
   useAsync(async () => {
-    const eth = new Eth(ethereum)
-    await ethereum.enable()
+    const eth = new Eth(ethereum || web3.currentProvider)
+    if (ethereum) await ethereum.enable()
     setAccounts(await eth.getAccounts())
-  }, [ethereum])
+  }, [ethereum, web3])
   useEffect(() => {
-    ethereum.on('accountsChanged', setAccounts)
-    return () => ethereum.off('accountsChanged', setAccounts)
+    if (ethereum) {
+      ethereum.on('accountsChanged', setAccounts)
+      return () => ethereum.off('accountsChanged', setAccounts)
+    }
   }, [ethereum])
   return accounts
 }
