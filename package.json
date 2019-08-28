@@ -1,6 +1,11 @@
 {
   "name": "ethfsplorer",
+  "version": "0.1.0",
+  "description": "File explorer component for EthFS written in React",
   "main": "dist/main",
+  "repository": "https://github.com/EthFS/ethfsplorer",
+  "author": "Hector Chu",
+  "license": "MIT",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --config webpack.dev.js"
