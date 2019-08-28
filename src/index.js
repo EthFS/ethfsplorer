@@ -8,7 +8,7 @@ const urlParams = new URLSearchParams(location.search)
 const address = urlParams.get('address')
 
 render(
-  <div style={{height: '100vh', padding: 5}}>
+  <div className="vh-100 py-1">
     <Explorer address={address} />
   </div>
 , document.getElementById('root'))
