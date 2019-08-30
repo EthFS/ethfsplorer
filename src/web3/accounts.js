@@ -11,7 +11,7 @@ export default function useAccounts() {
     setAccounts(await eth.getAccounts())
   }, [ethereum, web3])
   useEffect(() => {
-    if (ethereum) {
+    if (ethereum && ethereum.on) {
       ethereum.on('accountsChanged', setAccounts)
       return () => ethereum.off('accountsChanged', setAccounts)
     }

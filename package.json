@@ -1,6 +1,6 @@
 {
   "name": "ethfsplorer",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "File explorer component for EthFS written in React",
   "main": "dist/main",
   "repository": "https://github.com/EthFS/ethfsplorer",
