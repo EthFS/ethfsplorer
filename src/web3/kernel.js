@@ -6,6 +6,7 @@ import useAccounts from './accounts'
 export default function useKernel(address) {
   const accounts = useAccounts()
   const [kernel, setKernel] = useState()
+  const {ethereum, web3} = window
   useAsync(async () => {
     if (!accounts.length) return
     const Kernel = contract({abi: require('./Kernel.abi')})
