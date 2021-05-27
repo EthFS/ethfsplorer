@@ -5,7 +5,7 @@ import {useAsync} from 'react-async-hook'
 import {ContextMenu, MenuItem, ContextMenuTrigger} from 'react-contextmenu'
 import errno from 'errno'
 import moment from 'moment'
-import {sortedIndexBy} from 'lodash'
+import {keys, sortedIndexBy} from 'lodash'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import FileIcon from './FileIcon'
 import Table from './Table'
@@ -67,7 +67,7 @@ export default function FileList({kernel, path, onClickItem}) {
   const [progressError, setProgressError] = useState()
 
   useEvent('delete', async () => {
-    const selectedFiles = selectedRows
+    const selectedFiles = keys(selectedRows)
       .filter(i => i > 1)
       .map(i => files[i])
       .filter(x => x)
@@ -85,7 +85,7 @@ export default function FileList({kernel, path, onClickItem}) {
   }, [kernel, path, files, selectedRows])
 
   useEvent('download', async () => {
-    const selectedFiles = selectedRows
+    const selectedFiles = keys(selectedRows)
       .filter(i => i > 1)
       .map(i => files[i])
       .filter(x => x)
@@ -97,7 +97,7 @@ export default function FileList({kernel, path, onClickItem}) {
   const [cutFiles, setCutFiles] = useState([])
   const [copyFiles, setCopyFiles] = useState([])
   useEvent('cut', () => {
-    setCutFiles(selectedRows
+    setCutFiles(keys(selectedRows)
       .filter(i => i > 1)
       .map(i => files[i])
       .filter(x => x)
@@ -106,7 +106,7 @@ export default function FileList({kernel, path, onClickItem}) {
   }, [path, files, selectedRows])
   useEvent('copy', () => {
     setCutFiles([])
-    setCopyFiles(selectedRows
+    setCopyFiles(keys(selectedRows)
       .filter(i => i > 1)
       .map(i => files[i])
       .filter(x => x)

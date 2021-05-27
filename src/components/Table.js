@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {useTable, useRowSelect} from 'react-table'
 import {Table} from 'reactstrap'
 
@@ -10,7 +10,9 @@ export default function({columns, data, setSelectedRows}) {
     prepareRow,
     state: {selectedRowIds},
   } = useTable({columns, data}, useRowSelect)
-  if (setSelectedRows) setSelectedRows(selectedRowIds)
+  useEffect(() => {
+    if (setSelectedRows) setSelectedRows(selectedRowIds)
+  })
   return (
     <Table size="sm" hover responsive {...getTableProps()}>
       <thead>
