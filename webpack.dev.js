@@ -6,6 +6,7 @@ module.exports = merge(common, {
   entry: {
     index: './src'
   },
+  devtool: 'eval-source-map',
   devServer: {
     contentBase: 'public',
     open: true
