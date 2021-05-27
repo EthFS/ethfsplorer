@@ -6,9 +6,12 @@ export default function useAccounts() {
   const [accounts, setAccounts] = useState([])
   const {ethereum, web3} = window
   useAsync(async () => {
-    const eth = new Eth(ethereum || web3.currentProvider)
-    if (ethereum) await ethereum.enable()
-    setAccounts(await eth.getAccounts())
+    if (ethereum) {
+      setAccounts(await ethereum.request({method: 'eth_requestAccounts'}))
+    } else {
+      const eth = new Eth(web3.currentProvider)
+      setAccounts(await eth.getAccounts())
+    }
   }, [ethereum, web3])
   useEffect(() => {
     if (ethereum && ethereum.on) {
