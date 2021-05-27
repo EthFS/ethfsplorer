@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {useAsync} from 'react-async-hook'
-import contract from 'truffle-contract'
+import contract from '@truffle/contract'
 import useAccounts from './accounts'
 
 export default function useKernel(address) {

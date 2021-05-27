@@ -8,9 +8,9 @@ export default function({columns, data, setSelectedRows}) {
     headerGroups,
     rows,
     prepareRow,
-    state: [{selectedRows}],
+    state: {selectedRowIds},
   } = useTable({columns, data}, useRowSelect)
-  if (setSelectedRows) setSelectedRows(selectedRows)
+  if (setSelectedRows) setSelectedRows(selectedRowIds)
   return (
     <Table size="sm" hover responsive {...getTableProps()}>
       <thead>
