@@ -6,6 +6,9 @@ module.exports = merge(common, {
   entry: {
     main: './src/components/Explorer'
   },
+  optimization: {
+    minimize: false
+  },
   externals: {
     react: {
       commonjs: 'react',
