@@ -8,8 +8,7 @@ export default async function read(kernel, path) {
   for (let i = 0; i < size;) {
     const len = Math.min(65536, size - i)
     const data = await kernel.readPath(path, '0x', i, len)
-    buf.fill(data.slice(2), i, len, 'hex')
-    i += len
+    i += Buffer.from(data.slice(2), 'hex').copy(buf, i)
   }
   return buf
 }
