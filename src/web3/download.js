@@ -2,6 +2,7 @@ import * as Path from 'path'
 import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import {saveAs} from 'file-saver'
 import JSZip from 'jszip'
+import read from './read'
 
 export default async function download(kernel, path, files, zip) {
   if (!files.length) return
@@ -10,8 +11,7 @@ export default async function download(kernel, path, files, zip) {
     if (fileType == 1) {
       let data = ''
       if (size > 0) {
-        data = await kernel.readPath(utf8ToHex(Path.join(path, name)), '0x')
-        data = Buffer.from(data.slice(2), 'hex')
+        data = await read(kernel, Path.join(path, name))
       }
       return saveAs(new Blob([data], {type: 'application/octet-stream'}), name)
     }
@@ -28,8 +28,7 @@ export default async function download(kernel, path, files, zip) {
       case 1:
         let data = ''
         if (size > 0) {
-          data = await kernel.readPath(utf8ToHex(path2), '0x')
-          data = Buffer.from(data.slice(2), 'hex')
+          data = await read(kernel, path2)
         }
         zip.file(name, data)
         break

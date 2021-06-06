@@ -92,6 +92,14 @@
       {
         "name": "key",
         "type": "bytes"
+      },
+      {
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "name": "length",
+        "type": "uint256"
       }
     ],
     "name": "read",
@@ -115,6 +123,14 @@
       {
         "name": "key",
         "type": "bytes"
+      },
+      {
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "name": "length",
+        "type": "uint256"
       }
     ],
     "name": "readPath",

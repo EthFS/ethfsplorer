@@ -5,9 +5,9 @@ import {
 } from 'reactstrap'
 import Modal from './Modal'
 import {useAsync} from 'react-async-hook'
-import {utf8ToHex, hexToUtf8} from 'web3-utils'
 import common from 'common-prefix'
 import errno from 'errno'
+import read from '../../web3/read'
 import write from './write'
 
 export default function FileView({kernel, path, isOpen, toggle}) {
@@ -24,13 +24,9 @@ export default function FileView({kernel, path, isOpen, toggle}) {
     setBusy(true)
     setError()
     try {
-      const {fileType, size} = await kernel.stat(utf8ToHex(path))
-      if (fileType == 2) throw 'EISDIR'
-      if (size > 0) {
-        const data = hexToUtf8(await kernel.readPath(utf8ToHex(path), '0x'))
-        setText(data)
-        setOriginalText(data)
-      }
+      const data = (await read(kernel, path)).toString()
+      setText(data)
+      setOriginalText(data)
     } catch (e) {
       const err = errno.code[e.reason]
       setError(err ? err.description : e.message)

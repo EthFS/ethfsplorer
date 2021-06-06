@@ -26,7 +26,7 @@ export default function Xattr({
         for (let i = 0; i < entries; i++) {
           const name = await kernel.readkeyPath(utf8ToHex(path), i)
           if (!name) continue
-          const value = await kernel.readPath(utf8ToHex(path), name)
+          const value = await kernel.readPath(utf8ToHex(path), name, 0, 0)
           if (!value) continue
           const attr = {
             name: hexToUtf8(name),
