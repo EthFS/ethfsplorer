@@ -60,7 +60,7 @@ export default function FileList({kernel, path, onClickItem}) {
   }, [path, getFiles])
   useEvent('refresh-all', () => getFiles.execute(), [getFiles])
 
-  const [selectedRows, setSelectedRows] = useState([])
+  const [selectedRows, setSelectedRows] = useState({})
   const [progressTitle, setProgressTitle] = useState('')
   const [progress, setProgress] = useState()
   const [progressText, setProgressText] = useState('')

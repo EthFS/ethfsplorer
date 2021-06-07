@@ -2,7 +2,7 @@ import React, {useState, useRef} from 'react'
 import {Button, Form, FormGroup, Input, Spinner} from 'reactstrap'
 import {useAsync} from 'react-async-hook'
 import errno from 'errno'
-import {sortedIndexBy} from 'lodash'
+import {keys, sortedIndexBy} from 'lodash'
 import {toUtf8Bytes, toUtf8String} from '@ethersproject/strings'
 import Modal from './Modal'
 import Table from '../Table'
@@ -15,7 +15,7 @@ export default function Xattr({
 }) {
   const [attrs, setAttrs] = useState([])
   const [busy, setBusy] = useState(false)
-  const [selectedRows, setSelectedRows] = useState([])
+  const [selectedRows, setSelectedRows] = useState({})
   const getAttrs = useAsync(async () => {
     if (!kernel || path === '') return
     try {
@@ -25,9 +25,9 @@ export default function Xattr({
       if (fileType == 1) {
         for (let i = 0; i < nEntries; i++) {
           const name = await kernel.readkeyPath(toUtf8Bytes(path), i)
-          if (!name) continue
+          if (name === '0x') continue
           const value = await kernel.readPath(toUtf8Bytes(path), name, 0, 0)
-          if (!value) continue
+          if (value === '0x') continue
           const attr = {
             name: toUtf8String(name),
             value: toUtf8String(value),
@@ -52,7 +52,7 @@ export default function Xattr({
     setEditValue('')
   }
   function handleModify() {
-    const selected = selectedRows.map(i => attrs[i]).filter(x => x)
+    const selected = keys(selectedRows).map(i => attrs[i]).filter(x => x)
     if (selected.length > 0) {
       const {name, value} = selected[0]
       setShowEdit(true)
@@ -95,7 +95,7 @@ export default function Xattr({
     getAttrs.execute()
   }
   async function handleRemove() {
-    const selected = selectedRows.map(i => attrs[i]).filter(x => x)
+    const selected = keys(selectedRows).map(i => attrs[i]).filter(x => x)
     if (!selected.length) return
     try {
       setError()
@@ -147,11 +147,11 @@ export default function Xattr({
           Add
         </Button>
         <div style={{marginLeft: 5}} />
-        <Button color="secondary" onClick={handleModify} disabled={!selectedRows.length}>
+        <Button color="secondary" onClick={handleModify} disabled={!keys(selectedRows).length}>
           Modify
         </Button>
         <div style={{marginLeft: 5}} />
-        <Button color="danger" onClick={handleRemove} disabled={!selectedRows.length}>
+        <Button color="danger" onClick={handleRemove} disabled={!keys(selectedRows).length}>
           Remove
         </Button>
         <div style={{marginLeft: 5}} />
