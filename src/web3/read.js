@@ -1,7 +1,7 @@
-import {utf8ToHex, hexToUtf8} from 'web3-utils'
+import {toUtf8Bytes} from '@ethersproject/strings'
 
 export default async function read(kernel, path) {
-  path = utf8ToHex(path)
+  path = toUtf8Bytes(path)
   const {fileType, size} = await kernel.stat(path)
   if (fileType == 2) throw 'EISDIR'
   const buf = Buffer.alloc(Number(size))

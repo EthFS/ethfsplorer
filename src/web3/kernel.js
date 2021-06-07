@@ -1,18 +1,17 @@
 import {useState} from 'react'
 import {useAsync} from 'react-async-hook'
-import contract from '@truffle/contract'
+import {Contract} from '@ethersproject/contracts'
+import {Web3Provider} from '@ethersproject/providers'
 import useAccounts from './accounts'
 
 export default function useKernel(address) {
   const accounts = useAccounts()
   const [kernel, setKernel] = useState()
-  const {ethereum, web3} = window
+  const {ethereum} = window
   useAsync(async () => {
     if (!accounts.length) return
-    const Kernel = contract({abi: require('./Kernel.abi')})
-    Kernel.setProvider(ethereum || web3.currentProvider)
-    Kernel.defaults({from: accounts[0]})
-    setKernel(await Kernel.at(address))
-  }, [address, accounts, ethereum, web3])
+    const provider = new Web3Provider(ethereum)
+    setKernel(new Contract(address, require('./Kernel.abi'), provider.getSigner()))
+  }, [address, accounts, ethereum])
   return kernel
 }

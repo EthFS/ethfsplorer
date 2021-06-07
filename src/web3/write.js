@@ -4,7 +4,8 @@ export default async function write(kernel, fd, key, buf, len, progressCb) {
     while (i < len) {
       const j = Math.min(len, i+8192)
       progressCb(j)
-      await kernel.write(fd, key, buf.slice(i, j))
+      const tx = await kernel.write(fd, key, buf.slice(i, j))
+      await tx.wait()
       i = j
     }
     return [i]

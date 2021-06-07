@@ -2,7 +2,7 @@ import * as Path from 'path'
 import React, {useState, useEffect, useRef} from 'react'
 import {Form, FormGroup, Input, Progress} from 'reactstrap'
 import Modal from './Modal'
-import {utf8ToHex} from 'web3-utils'
+import {toUtf8Bytes} from '@ethersproject/strings'
 import errno from 'errno'
 import {emit} from '../../utils/events'
 import useTrigger from '../../utils/trigger'
@@ -23,7 +23,8 @@ export default function NewFolder({kernel, path, isOpen, toggle}) {
       setError()
       setProgress(100)
       setProgressText(`Creating folder ${path2}`)
-      await kernel.mkdir(utf8ToHex(path2))
+      const tx = await kernel.mkdir(toUtf8Bytes(path2))
+      await tx.wait()
       setName('')
       toggle()
       emit('refresh-path', path)

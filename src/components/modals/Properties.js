@@ -1,12 +1,12 @@
 import * as Path from 'path'
 import errno from 'errno'
-import moment from 'moment'
+import {format} from 'date-fns'
 import React, {useState, useEffect} from 'react'
 import {Row, Col, Form, FormGroup, Input, Label, Progress} from 'reactstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faEdit} from '@fortawesome/free-solid-svg-icons'
 import {useAsync} from 'react-async-hook'
-import {utf8ToHex, hexToUtf8} from 'web3-utils'
+import {toUtf8Bytes, toUtf8String} from '@ethersproject/strings'
 import Modal from './Modal'
 import Tabs from '../Tabs'
 import Xattr from './Xattr'
@@ -34,9 +34,9 @@ export default function Properties({kernel, path, isOpen, toggle}) {
   const getStat = useAsync(async () => {
     if (!kernel || path === '' || !isOpen) return
     try {
-      const stat = await kernel.lstat(utf8ToHex(path))
+      const stat = await kernel.lstat(toUtf8Bytes(path))
       if (stat.fileType == 3) {
-        stat.target = hexToUtf8(await kernel.readlink(utf8ToHex(path)))
+        stat.target = toUtf8String(await kernel.readlink(toUtf8Bytes(path)))
       }
       setStat(stat)
       setMode(stat.mode & 511)
@@ -65,7 +65,8 @@ export default function Properties({kernel, path, isOpen, toggle}) {
       setError()
       setProgress(100)
       setProgressText(`Changing mode for ${path}`)
-      await kernel.chmod(utf8ToHex(path), mode)
+      const tx = await kernel.chmod(toUtf8Bytes(path), mode)
+      await tx.wait()
       toggle()
       emit('refresh-path', Path.dirname(path))
     } catch (e) {
@@ -82,7 +83,8 @@ export default function Properties({kernel, path, isOpen, toggle}) {
           setError()
           setProgress(100)
           setProgressText(`Changing owner for ${path}`)
-          await kernel.chown(utf8ToHex(path), newOwner, nullAddress)
+          const tx = await kernel.chown(toUtf8Bytes(path), newOwner, nullAddress)
+          await tx.wait()
           setEditOwner(false)
           setProgress()
           getStat.execute()
@@ -107,7 +109,8 @@ export default function Properties({kernel, path, isOpen, toggle}) {
           setError()
           setProgress(100)
           setProgressText(`Changing group for ${path}`)
-          await kernel.chown(utf8ToHex(path), nullAddress, newGroup)
+          const tx = await kernel.chown(toUtf8Bytes(path), nullAddress, newGroup)
+          await tx.wait()
           setEditGroup(false)
           setProgress()
           getStat.execute()
@@ -153,7 +156,7 @@ export default function Properties({kernel, path, isOpen, toggle}) {
             {stat.fileType == 2 ?
               <Row>
                 <Label sm={4}>Contains:</Label>
-                <Label sm={8}>{stat.entries - 2} file(s)</Label>
+                <Label sm={8}>{stat.nEntries - 2} file(s)</Label>
               </Row>
               :
               <Row>
@@ -163,7 +166,7 @@ export default function Properties({kernel, path, isOpen, toggle}) {
             }
             <Row>
               <Label sm={4}>Last modified:</Label>
-              <Label sm={8}>{moment(stat.lastModified * 1e3).format('DD MMMM YYYY HH:mm:ss')}</Label>
+              <Label sm={8}>{stat.lastModified && format(stat.lastModified * 1e3, 'dd MMMM yyyy HH:mm:ss')}</Label>
             </Row>
           </FormGroup>
           <FormGroup>

@@ -1,6 +1,6 @@
 import * as Path from 'path'
 import errno from 'errno'
-import {utf8ToHex} from 'web3-utils'
+import {toUtf8Bytes} from '@ethersproject/strings'
 import constants from './constants'
 import write from './write'
 
@@ -19,7 +19,8 @@ export default async function upload(
         try {
           const buf = Buffer.from(reader.result)
           setProgressText(`Opening ${name}`)
-          await kernel.open(utf8ToHex(path2), constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL)
+          let tx = await kernel.open(toUtf8Bytes(path2), constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL)
+          await tx.wait()
           const fd = Number(await kernel.result())
           const [,e] = await write(kernel, fd, '0x', buf, buf.length, x => {
             setProgress(100 * x/buf.length)
@@ -28,7 +29,8 @@ export default async function upload(
           if (e) throw e
           setProgress(100)
           setProgressText(`Closing ${name}`)
-          await kernel.close(fd)
+          tx = await kernel.close(fd)
+          await tx.wait()
           resolve()
         } catch (e) {
           const err = errno.code[e.reason]

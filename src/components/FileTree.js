@@ -2,7 +2,7 @@ import * as Path from 'path'
 import React, {useState} from 'react'
 import {Spinner} from 'reactstrap'
 import {useAsync} from 'react-async-hook'
-import {utf8ToHex, hexToUtf8} from 'web3-utils'
+import {toUtf8Bytes, toUtf8String} from '@ethersproject/strings'
 import FileIcon from './FileIcon'
 import {useEvent} from '../utils/events'
 
@@ -21,13 +21,13 @@ export default function FileTree({
     if (!kernel || !expanded) return
     setBusy(true)
     try {
-      const {fileType, entries} = await kernel.stat(utf8ToHex(path))
+      const {fileType, nEntries} = await kernel.stat(toUtf8Bytes(path))
       if (fileType != 2) return
       const files = []
-      for (let i = 2; i < entries; i++) {
+      for (let i = 2; i < nEntries; i++) {
         try {
-          const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
-          const {fileType} = await kernel.stat(utf8ToHex(Path.join(path, name)))
+          const name = toUtf8String(await kernel.readkeyPath(toUtf8Bytes(path), i))
+          const {fileType} = await kernel.stat(toUtf8Bytes(Path.join(path, name)))
           if (fileType == 2) files.push(name)
         } catch (e) {}
       }

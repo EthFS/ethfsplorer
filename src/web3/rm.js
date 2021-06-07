@@ -1,16 +1,18 @@
 import * as Path from 'path'
-import {utf8ToHex, hexToUtf8} from 'web3-utils'
+import {toUtf8Bytes, toUtf8String} from '@ethersproject/strings'
 
 export default async function rm(kernel, path, setProgress, setProgressText) {
-  const {fileType, entries} = await kernel.lstat(utf8ToHex(path))
+  const {fileType, nEntries} = await kernel.lstat(toUtf8Bytes(path))
   if (fileType != 2) {
     setProgressText(`Deleting file ${path}`)
-    return await kernel.unlink(utf8ToHex(path))
+    const tx = await kernel.unlink(toUtf8Bytes(path))
+    return await tx.wait()
   }
-  for (let i = entries-1; i > 1; i--) {
-    const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
+  for (let i = nEntries-1; i > 1; i--) {
+    const name = toUtf8String(await kernel.readkeyPath(toUtf8Bytes(path), i))
     await rm(kernel, Path.join(path, name), setProgress, setProgressText)
   }
   setProgressText(`Deleting folder ${path}`)
-  await kernel.rmdir(utf8ToHex(path))
+  const tx = await kernel.rmdir(toUtf8Bytes(path))
+  await tx.wait()
 }

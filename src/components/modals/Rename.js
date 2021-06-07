@@ -2,7 +2,7 @@ import * as Path from 'path'
 import React, {useState, useEffect, useRef} from 'react'
 import {Form, FormGroup, Input, Progress} from 'reactstrap'
 import Modal from './Modal'
-import {utf8ToHex} from 'web3-utils'
+import {toUtf8Bytes} from '@ethersproject/strings'
 import errno from 'errno'
 import {emit} from '../../utils/events'
 import useTrigger from '../../utils/trigger'
@@ -38,7 +38,8 @@ export default function Rename({kernel, path, isOpen, toggle}) {
       setError()
       setProgress(100)
       setProgressText(`Renaming ${path} to ${path2}`)
-      await kernel.move(utf8ToHex(path), utf8ToHex(path2))
+      const tx = await kernel.move(toUtf8Bytes(path), toUtf8Bytes(path2))
+      await tx.wait()
       toggle()
       emit('refresh-path', Path.dirname(path))
     } catch (e) {

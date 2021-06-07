@@ -2,7 +2,7 @@ import * as Path from 'path'
 import React, {useState, useEffect, useRef} from 'react'
 import {Form, FormGroup, Input, Progress} from 'reactstrap'
 import Modal from './Modal'
-import {utf8ToHex} from 'web3-utils'
+import {toUtf8Bytes} from '@ethersproject/strings'
 import errno from 'errno'
 import {emit} from '../../utils/events'
 import useTrigger from '../../utils/trigger'
@@ -24,7 +24,8 @@ export default function NewLink({kernel, path, isOpen, toggle}) {
       setError()
       setProgress(100)
       setProgressText(`Creating link from ${path2} to ${target}`)
-      await kernel.symlink(utf8ToHex(target), utf8ToHex(path2))
+      const tx = await kernel.symlink(toUtf8Bytes(target), toUtf8Bytes(path2))
+      await tx.wait()
       setName('')
       setTarget('')
       toggle()

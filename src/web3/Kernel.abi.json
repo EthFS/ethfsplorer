@@ -456,7 +456,7 @@
         "type": "address"
       },
       {
-        "name": "entries",
+        "name": "nEntries",
         "type": "uint256"
       },
       {
@@ -507,7 +507,7 @@
         "type": "address"
       },
       {
-        "name": "entries",
+        "name": "nEntries",
         "type": "uint256"
       },
       {
@@ -558,7 +558,7 @@
         "type": "address"
       },
       {
-        "name": "entries",
+        "name": "nEntries",
         "type": "uint256"
       },
       {

@@ -4,9 +4,9 @@ import {Alert, Spinner} from 'reactstrap'
 import {useAsync} from 'react-async-hook'
 import {ContextMenu, MenuItem, ContextMenuTrigger} from 'react-contextmenu'
 import errno from 'errno'
-import moment from 'moment'
+import {format} from 'date-fns'
 import {keys, sortedIndexBy} from 'lodash'
-import {utf8ToHex, hexToUtf8} from 'web3-utils'
+import {toUtf8Bytes, toUtf8String} from '@ethersproject/strings'
 import FileIcon from './FileIcon'
 import Table from './Table'
 import FileView from './modals/FileView'
@@ -30,15 +30,15 @@ export default function FileList({kernel, path, onClickItem}) {
     setBusy(true)
     setError()
     try {
-      const {fileType, entries} = await kernel.stat(utf8ToHex(path))
+      const {fileType, nEntries} = await kernel.stat(toUtf8Bytes(path))
       if (fileType != 2) throw 'ENOTDIR'
       const dirs = [], dotdirs = []
       const files = [], dotfiles = []
-      for (let i = 0; i < entries; i++) {
-        const name = hexToUtf8(await kernel.readkeyPath(utf8ToHex(path), i))
-        const stat = await kernel.lstat(utf8ToHex(Path.join(path, name)))
+      for (let i = 0; i < nEntries; i++) {
+        const name = toUtf8String(await kernel.readkeyPath(toUtf8Bytes(path), i))
+        const stat = await kernel.lstat(toUtf8Bytes(Path.join(path, name)))
         const size = stat.fileType == 2 ? undefined : Number(stat.size)
-        const lastModified = moment(stat.lastModified * 1e3).format('DD MMM YYYY HH:mm')
+        const lastModified = format(stat.lastModified * 1e3, 'dd MMM yyyy HH:mm')
         let arr
         if (stat.fileType == 2) {
           arr = name[0] === '.' ? dotdirs : dirs
@@ -120,7 +120,8 @@ export default function FileList({kernel, path, onClickItem}) {
         for (let i = 0; i < cutFiles.length; i++) {
           setProgress(100*(i+1) / cutFiles.length)
           setProgressText(`Moving ${cutFiles[i]}`)
-          await kernel.move(utf8ToHex(cutFiles[i]), utf8ToHex(path))
+          const tx = await kernel.move(toUtf8Bytes(cutFiles[i]), toUtf8Bytes(path))
+          await tx.wait()
         }
       }
       if (copyFiles.length) {
@@ -128,7 +129,8 @@ export default function FileList({kernel, path, onClickItem}) {
         for (let i = 0; i < copyFiles.length; i++) {
           setProgress(100*(i+1) / copyFiles.length)
           setProgressText(`Copying ${copyFiles[i]}`)
-          await kernel.copy(utf8ToHex(copyFiles[i]), utf8ToHex(path))
+          const tx = await kernel.copy(toUtf8Bytes(copyFiles[i]), toUtf8Bytes(path))
+          await tx.wait()
         }
       }
       setProgress()
@@ -159,7 +161,7 @@ export default function FileList({kernel, path, onClickItem}) {
           return onClickItem(path2)
         case 3:
           try {
-            stat = await kernel.stat(utf8ToHex(path2))
+            stat = await kernel.stat(toUtf8Bytes(path2))
           } catch (e) {
             return setError('Target not found or too many levels of symbolic links')
           }

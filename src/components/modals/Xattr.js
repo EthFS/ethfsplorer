@@ -3,7 +3,7 @@ import {Button, Form, FormGroup, Input, Spinner} from 'reactstrap'
 import {useAsync} from 'react-async-hook'
 import errno from 'errno'
 import {sortedIndexBy} from 'lodash'
-import {utf8ToHex, hexToUtf8} from 'web3-utils'
+import {toUtf8Bytes, toUtf8String} from '@ethersproject/strings'
 import Modal from './Modal'
 import Table from '../Table'
 import useTrigger from '../../utils/trigger'
@@ -21,16 +21,16 @@ export default function Xattr({
     try {
       setBusy(true)
       const attrs = []
-      const {fileType, entries} = await kernel.stat(utf8ToHex(path))
+      const {fileType, nEntries} = await kernel.stat(toUtf8Bytes(path))
       if (fileType == 1) {
-        for (let i = 0; i < entries; i++) {
-          const name = await kernel.readkeyPath(utf8ToHex(path), i)
+        for (let i = 0; i < nEntries; i++) {
+          const name = await kernel.readkeyPath(toUtf8Bytes(path), i)
           if (!name) continue
-          const value = await kernel.readPath(utf8ToHex(path), name, 0, 0)
+          const value = await kernel.readPath(toUtf8Bytes(path), name, 0, 0)
           if (!value) continue
           const attr = {
-            name: hexToUtf8(name),
-            value: hexToUtf8(value),
+            name: toUtf8String(name),
+            value: toUtf8String(value),
           }
           attrs.splice(sortedIndexBy(attrs, attr, 'name'), 0, attr)
         }
@@ -65,24 +65,28 @@ export default function Xattr({
       setError()
       setProgress(100)
       setProgressText(`Opening ${path}`)
-      await kernel.open(utf8ToHex(path), constants.O_WRONLY)
+      let tx = await kernel.open(toUtf8Bytes(path), constants.O_WRONLY)
+      await tx.wait()
       const fd = Number(await kernel.result())
       if (editName !== '' && name !== editName) {
         setProgressText(`Removing ${editName}`)
-        await kernel.clear(fd, utf8ToHex(editName))
+        tx = await kernel.clear(fd, toUtf8Bytes(editName))
+        await tx.wait()
       }
       if (attrs.find(x => x.name === name)) {
         setProgressText(`Truncating value for ${name}`)
-        await kernel.truncate(fd, utf8ToHex(name), 0)
+        tx = await kernel.truncate(fd, toUtf8Bytes(name), 0)
+        await tx.wait()
       }
       const buf = Buffer.from(value)
-      const [,e] = await write(kernel, fd, utf8ToHex(name), buf, buf.length, x => {
+      const [,e] = await write(kernel, fd, toUtf8Bytes(name), buf, buf.length, x => {
         setProgress(100 * x/buf.length)
         setProgressText(`Setting value for ${name}: ${x} / ${buf.length} bytes`)
       })
       if (e) throw e
       setProgressText(`Closing ${path}`)
-      await kernel.close(fd)
+      tx = await kernel.close(fd)
+      await tx.wait()
       setProgress()
     } catch (e) {
       const err = errno.code[e.reason]
@@ -97,15 +101,18 @@ export default function Xattr({
       setError()
       setProgress(100)
       setProgressText(`Opening ${path}`)
-      await kernel.open(utf8ToHex(path), constants.O_WRONLY)
+      let tx = await kernel.open(toUtf8Bytes(path), constants.O_WRONLY)
+      await tx.wait()
       const fd = Number(await kernel.result())
       for (let i = 0; i < selected.length; i++) {
         const {name} = selected[i]
         setProgressText(`Removing ${name}`)
-        await kernel.clear(fd, utf8ToHex(name))
+        tx = await kernel.clear(fd, toUtf8Bytes(name))
+        await tx.wait()
       }
       setProgressText(`Closing ${path}`)
-      await kernel.close(fd)
+      tx = await kernel.close(fd)
+      await tx.wait()
       setProgress()
     } catch (e) {
       const err = errno.code[e.reason]
