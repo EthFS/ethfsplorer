@@ -78,7 +78,7 @@ export default function Xattr({
         tx = await kernel.truncate(fd, toUtf8Bytes(name), 0)
         await tx.wait()
       }
-      const buf = Buffer.from(value)
+      const buf = toUtf8Bytes(value)
       const [,e] = await write(kernel, fd, toUtf8Bytes(name), buf, buf.length, x => {
         setProgress(100 * x/buf.length)
         setProgressText(`Setting value for ${name}: ${x} / ${buf.length} bytes`)

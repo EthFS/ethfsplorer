@@ -17,7 +17,7 @@ export default async function upload(
     await new Promise((resolve, reject) => {
       reader.onloadend = async () => {
         try {
-          const buf = Buffer.from(reader.result)
+          const buf = new Uint8Array(reader.result)
           setProgressText(`Opening ${name}`)
           let tx = await kernel.open(toUtf8Bytes(path2), constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL)
           await tx.wait()

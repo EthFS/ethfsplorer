@@ -7,6 +7,7 @@ import Modal from './Modal'
 import {useAsync} from 'react-async-hook'
 import common from 'common-prefix'
 import errno from 'errno'
+import {toUtf8String} from '@ethersproject/strings'
 import read from '../../web3/read'
 import write from './write'
 
@@ -24,7 +25,7 @@ export default function FileView({kernel, path, isOpen, toggle}) {
     setBusy(true)
     setError()
     try {
-      const data = (await read(kernel, path)).toString()
+      const data = toUtf8String(await read(kernel, path))
       setText(data)
       setOriginalText(data)
     } catch (e) {

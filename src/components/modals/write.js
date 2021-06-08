@@ -10,7 +10,7 @@ export default async function(
   setProgress, setProgressText, setError, onOk,
 ) {
   try {
-    const buf = Buffer.from(text)
+    const buf = toUtf8Bytes(text)
     setProgress(100)
     setProgressText(`Opening ${basename(path)}`)
     let tx = await kernel.open(toUtf8Bytes(path), constants.O_WRONLY | flags)
