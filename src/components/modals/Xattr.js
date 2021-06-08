@@ -3,6 +3,7 @@ import {Button, Form, FormGroup, Input, Spinner} from 'reactstrap'
 import {useAsync} from 'react-async-hook'
 import errno from 'errno'
 import {keys, sortedIndexBy} from 'lodash'
+import {MaxUint256} from '@ethersproject/constants'
 import {toUtf8Bytes, toUtf8String} from '@ethersproject/strings'
 import Modal from './Modal'
 import Table from '../Table'
@@ -26,7 +27,7 @@ export default function Xattr({
         for (let i = 0; i < nEntries; i++) {
           const name = await kernel.readkeyPath(toUtf8Bytes(path), i)
           if (name === '0x') continue
-          const value = await kernel.readPath(toUtf8Bytes(path), name, 0, 0)
+          const value = await kernel.readPath(toUtf8Bytes(path), name, 0, MaxUint256)
           if (value === '0x') continue
           const attr = {
             name: toUtf8String(name),
